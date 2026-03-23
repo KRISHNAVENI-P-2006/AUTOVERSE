@@ -1,0 +1,12 @@
+{% extends 'admin/base.html' %}
+{% block page_title %}{{ action }} Manufacturer{% endblock %}
+{% block content %}
+<div style="max-width:550px;"><div class="card"><div class="card-hdr"><span class="card-title">Details</span><a href="{{ url_for('admin_manufacturers') }}" class="btn btn-ghost btn-sm">← Back</a></div>
+<div class="card-body"><form method="POST"><div class="fg">
+<div class="fgrp fg-full"><label>Name</label><input name="name" value="{{ mfr.name if mfr else '' }}" required></div>
+<div class="fgrp"><label>Country</label><input name="country" value="{{ mfr.country if mfr else '' }}"></div>
+<div class="fgrp"><label>Founded Year</label><input name="founded_year" type="number" value="{{ mfr.founded_year if mfr else '' }}"></div>
+<div class="fgrp fg-full"><label>Website</label><input name="website" type="url" value="{{ mfr.website if mfr else '' }}"></div>
+</div><div style="margin-top:16px;display:flex;gap:8px;"><button class="btn btn-primary">{{ action }}</button><a href="{{ url_for('admin_manufacturers') }}" class="btn btn-ghost">Cancel</a></div>
+</form></div></div></div>
+{% endblock %}

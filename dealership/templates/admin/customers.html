@@ -1,0 +1,15 @@
+{% extends 'admin/base.html' %}
+{% block page_title %}Customers{% endblock %}
+{% block topbar_actions %}<a href="{{ url_for('admin_add_customer') }}" class="btn btn-primary btn-sm">+ Add</a>{% endblock %}
+{% block content %}
+<div class="sbar"><form method="GET" style="display:flex;gap:8px;"><input name="search" value="{{ search }}" placeholder="Search name, email, phone..." style="max-width:280px;"><button class="btn btn-ghost btn-sm">Search</button>{% if search %}<a href="{{ url_for('admin_customers') }}" class="btn btn-ghost btn-sm">Clear</a>{% endif %}</form></div>
+<div class="card"><div class="card-hdr"><span class="card-title">{{ customers|length }} Customers</span></div>
+<div class="tw"><table><thead><tr><th>Name</th><th>Phone</th><th>Email</th><th>Address</th><th>Account</th><th>Actions</th></tr></thead><tbody>
+{% for c in customers %}
+<tr><td class="td-main">{{c.name}}</td><td class="mono">{{c.phone or '—'}}</td><td>{{c.email or '—'}}</td>
+<td style="max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{c.address or '—'}}</td>
+<td>{% if c.username %}<span class="badge b-customer">{{c.username}}</span>{% else %}—{% endif %}</td>
+<td><div style="display:flex;gap:5px;"><a href="{{ url_for('admin_edit_customer',id=c.customer_id) }}" class="btn btn-ghost btn-sm">Edit</a>
+<form method="POST" action="{{ url_for('admin_delete_customer',id=c.customer_id) }}" onsubmit="return confirm('Delete?')"><button class="btn btn-danger btn-sm">Del</button></form></div></td></tr>
+{% endfor %}</tbody></table></div></div>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends 'admin/base.html' %}
+{% block page_title %}Test Drive Bookings{% endblock %}
+{% block content %}
+<div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center;">
+  <select onchange="location='?branch='+this.value" style="font-size:12px;padding:6px 10px;">
+    <option value="">All Branches</option>
+    {% for b in branches %}<option value="{{ b }}" {% if branch_filter==b %}selected{% endif %}>{{ b }}</option>{% endfor %}
+  </select>
+</div>
+<div class="card">
+  <div class="card-hdr"><span class="card-title">{{ bookings|length }} Test Drive Bookings</span></div>
+  {% if bookings %}
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Customer</th><th>Phone</th><th>Vehicle</th><th>Branch</th><th>Date</th><th>Time</th><th>Status</th></tr></thead>
+      <tbody>
+        {% for b in bookings %}
+        <tr>
+          <td class="td-main">{{ b.customer_name }}</td>
+          <td class="mono" style="font-size:11px;">{{ b.customer_phone }}</td>
+          <td>{{ b.vehicle }}</td>
+          <td style="font-size:12px;">{{ b.branch }}</td>
+          <td class="mono">{{ b.preferred_date }}</td>
+          <td class="mono">{{ b.preferred_time }}</td>
+          <td><span class="badge {% if b.status=='confirmed' %}b-available{% elif b.status=='pending' %}b-pending{% elif b.status=='completed' %}b-responded{% else %}b-closed{% endif %}">{{ b.status }}</span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div style="padding:40px;text-align:center;color:var(--t3);">No test drive bookings yet.</div>
+  {% endif %}
+</div>
+{% endblock %}

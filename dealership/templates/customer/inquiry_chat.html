@@ -1,0 +1,82 @@
+{% extends 'customer/base.html' %}
+{% block title %}Inquiry Chat — Autoverse{% endblock %}
+{% block page_title %}{{ inquiry.vehicle }}{% endblock %}
+{% block topbar_actions %}
+  <a href="{{ url_for('customer_inquiries') }}" class="btn btn-ghost btn-sm">← All Inquiries</a>
+  {% if inquiry.status == 'open' %}
+  <form method="POST" style="display:inline;">
+    <input type="hidden" name="action" value="close">
+    <button type="submit" class="btn btn-ghost btn-sm" onclick="return confirm('Close this inquiry?')">🔒 Close</button>
+  </form>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+<div style="max-width:720px;margin:0 auto;display:flex;flex-direction:column;height:calc(100vh - 130px);">
+
+  <!-- Header card -->
+  <div class="card" style="margin-bottom:14px;flex-shrink:0;">
+    <div style="padding:14px 18px;display:flex;align-items:center;gap:14px;">
+      {% if inquiry.image_url %}
+      <img src="{{ inquiry.image_url }}" style="width:64px;height:44px;object-fit:cover;border-radius:6px;border:1px solid var(--border);">
+      {% endif %}
+      <div style="flex:1;">
+        <div style="font-family:'Fraunces',serif;font-size:16px;font-weight:600;">{{ inquiry.vehicle }}</div>
+        <div style="font-size:12px;color:var(--t3);">
+          📍 {{ inquiry.branch }} · Started {{ inquiry.inquiry_date }}
+          {% if inquiry.staff_name %} · Staff: {{ inquiry.staff_name }}{% endif %}
+        </div>
+      </div>
+      <span class="badge {% if inquiry.status=='open' %}b-available{% else %}b-closed{% endif %}">
+        {% if inquiry.status=='open' %}🟢 Open{% else %}🔒 Closed{% endif %}
+      </span>
+    </div>
+  </div>
+
+  <!-- Chat messages -->
+  <div id="chat-box" style="flex:1;overflow-y:auto;padding:4px 0;margin-bottom:14px;">
+    {% if not messages %}
+    <div style="text-align:center;color:var(--t3);padding:40px;font-size:14px;">
+      No messages yet. Send your first message below.
+    </div>
+    {% endif %}
+    {% for msg in messages %}
+    {% set is_mine = msg.sender_role == 'customer' %}
+    <div style="display:flex;flex-direction:column;align-items:{% if is_mine %}flex-end{% else %}flex-start{% endif %};margin-bottom:10px;">
+      <div style="font-size:10px;color:var(--t3);margin-bottom:3px;padding:0 4px;">
+        {% if not is_mine %}{{ msg.sender_name }} · {% endif %}{{ msg.sent_at }}
+      </div>
+      <div style="max-width:75%;padding:11px 15px;border-radius:{% if is_mine %}14px 14px 4px 14px{% else %}14px 14px 14px 4px{% endif %};
+                  background:{% if is_mine %}var(--accent){% else %}var(--surface){% endif %};
+                  color:{% if is_mine %}#fff{% else %}var(--text){% endif %};
+                  border:1px solid {% if is_mine %}transparent{% else %}var(--border){% endif %};
+                  font-size:13.5px;line-height:1.55;">
+        {{ msg.message }}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Reply box -->
+  {% if inquiry.status == 'open' %}
+  <div class="card" style="flex-shrink:0;">
+    <form method="POST" style="padding:14px;display:flex;gap:10px;align-items:flex-end;">
+      <input type="hidden" name="action" value="send">
+      <textarea name="message" placeholder="Type your message…" rows="2"
+                style="flex:1;resize:none;min-height:unset;"
+                onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();this.closest('form').submit();}"></textarea>
+      <button type="submit" class="btn btn-primary" style="padding:10px 18px;">Send →</button>
+    </form>
+  </div>
+  {% else %}
+  <div style="text-align:center;padding:14px;color:var(--t3);font-size:13px;background:var(--surface);border-radius:10px;border:1px solid var(--border);">
+    🔒 This inquiry is closed. <a href="{{ url_for('customer_add_inquiry', vehicle_id=inquiry.vehicle_id) }}" style="color:var(--accent);">Start a new one</a>
+  </div>
+  {% endif %}
+</div>
+
+<script>
+  const box = document.getElementById('chat-box');
+  if(box) box.scrollTop = box.scrollHeight;
+</script>
+{% endblock %}

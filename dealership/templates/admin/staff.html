@@ -1,0 +1,14 @@
+{% extends 'admin/base.html' %}
+{% block page_title %}Staff{% endblock %}
+{% block topbar_actions %}<a href="{{ url_for('admin_add_staff') }}" class="btn btn-primary btn-sm">+ Add Staff</a>{% endblock %}
+{% block content %}
+<div class="card"><div class="card-hdr"><span class="card-title">{{ staff_list|length }} Staff Members</span></div>
+<div class="tw"><table><thead><tr><th>Name</th><th>Branch</th><th>Phone</th><th>Salary</th><th>Sales</th><th>Revenue</th><th>Login</th><th>Actions</th></tr></thead><tbody>
+{% for s in staff_list %}
+<tr><td class="td-main">{{s.name}}</td><td><span class="badge b-responded">{{s.branch}}</span></td><td class="mono">{{s.phone or '—'}}</td>
+<td class="text-gold">{{ fmt_inr(s.salary or 0) }}</td><td class="mono">{{s.sales_count}}</td><td class="text-green fw6">{{ fmt_inr(s.total_sales) }}</td>
+<td>{% if s.username %}<span class="badge b-staff">{{s.username}}</span>{% else %}<span class="text-muted">—</span>{% endif %}</td>
+<td><div style="display:flex;gap:5px;"><a href="{{ url_for('admin_edit_staff',id=s.staff_id) }}" class="btn btn-ghost btn-sm">Edit</a>
+<form method="POST" action="{{ url_for('admin_delete_staff',id=s.staff_id) }}" onsubmit="return confirm('Delete?')"><button class="btn btn-danger btn-sm">Del</button></form></div></td></tr>
+{% endfor %}</tbody></table></div></div>
+{% endblock %}

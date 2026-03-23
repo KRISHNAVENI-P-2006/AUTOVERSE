@@ -1,0 +1,13 @@
+{% extends 'admin/base.html' %}
+{% block page_title %}Manufacturers{% endblock %}
+{% block topbar_actions %}<a href="{{ url_for('admin_add_manufacturer') }}" class="btn btn-primary btn-sm">+ Add</a>{% endblock %}
+{% block content %}
+<div class="card"><div class="card-hdr"><span class="card-title">{{ manufacturers|length }} Manufacturers</span></div>
+<div class="tw"><table><thead><tr><th>Name</th><th>Country</th><th>Founded</th><th>Vehicles</th><th>Actions</th></tr></thead><tbody>
+{% for m in manufacturers %}
+<tr><td class="td-main">{{m.name}}</td><td>{{m.country or '—'}}</td><td class="mono">{{m.founded_year or '—'}}</td>
+<td><span class="badge b-available">{{m.vehicle_count}}</span></td>
+<td><div style="display:flex;gap:5px;"><a href="{{ url_for('admin_edit_manufacturer',id=m.manufacturer_id) }}" class="btn btn-ghost btn-sm">Edit</a>
+<form method="POST" action="{{ url_for('admin_delete_manufacturer',id=m.manufacturer_id) }}" onsubmit="return confirm('Delete?')"><button class="btn btn-danger btn-sm">Del</button></form></div></td></tr>
+{% endfor %}</tbody></table></div></div>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends 'admin/base.html' %}
+{% block page_title %}{{ action }} Staff{% endblock %}
+{% block content %}
+<div style="max-width:650px;"><div class="card"><div class="card-hdr"><span class="card-title">Staff Details</span><a href="{{ url_for('admin_staff') }}" class="btn btn-ghost btn-sm">← Back</a></div>
+<div class="card-body"><form method="POST"><div class="fg">
+<div class="fgrp fg-full"><label>Full Name</label><input name="name" value="{{ staff.name if staff else '' }}" required></div>
+<div class="fgrp"><label>Phone</label><input name="phone" value="{{ staff.phone if staff else '' }}"></div>
+<div class="fgrp"><label>Email</label><input name="email" type="email" value="{{ staff.email if staff else '' }}"></div>
+<div class="fgrp"><label>Branch</label><select name="branch">{% for b in BRANCHES %}<option value="{{ b }}" {% if staff and staff.branch==b %}selected{% endif %}>{{ b }}</option>{% endfor %}</select></div>
+<div class="fgrp"><label>Salary (₹)</label><input name="salary" type="number" value="{{ staff.salary if staff else '' }}"></div>
+{% if action == 'Add' %}
+<div class="fgrp"><label>Login Username</label><input name="username" placeholder="Required for login"></div>
+<div class="fgrp"><label>Password</label><input name="password" type="password" placeholder="Required if username set"></div>
+{% else %}
+<div class="fgrp"><label>Reset Password (leave blank to keep)</label><input name="new_password" type="password" placeholder="New password..."></div>
+{% endif %}
+</div><div style="margin-top:16px;display:flex;gap:8px;"><button class="btn btn-primary">{{ action }} Staff</button><a href="{{ url_for('admin_staff') }}" class="btn btn-ghost">Cancel</a></div>
+</form></div></div></div>
+{% endblock %}

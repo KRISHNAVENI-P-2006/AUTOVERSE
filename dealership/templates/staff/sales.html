@@ -1,0 +1,33 @@
+{% extends 'staff/base.html' %}
+{% block title %}My Sales — AutoElite Staff{% endblock %}
+{% block page_title %}My Sales{% endblock %}
+{% block topbar_actions %}
+  <a href="{{ url_for('staff_add_sale') }}" class="btn btn-sm" style="background:var(--gold);color:#000;">+ Record Sale</a>
+{% endblock %}
+{% block content %}
+<div class="card">
+  <div class="card-hdr">
+    <span class="card-title">{{ sales|length }} Sales by {{ staff.name }}</span>
+    {% if sales %}<span style="color:var(--gold);font-weight:700;font-size:13px;">₹{{ "{:,.0f}".format(sales|sum(attribute='sale_price')) }} Total</span>{% endif %}
+  </div>
+  <div class="tw">
+    <table>
+      <thead><tr><th>ID</th><th>Vehicle</th><th>Customer</th><th>Sale Price</th><th>Date</th><th>Notes</th></tr></thead>
+      <tbody>
+        {% for s in sales %}
+        <tr>
+          <td style="font-family:'JetBrains Mono',monospace;color:var(--t3);">#{{ s.sale_id }}</td>
+          <td class="td-main">{{ s.vehicle }}</td>
+          <td>{{ s.customer_name }}</td>
+          <td style="color:var(--gold);font-weight:700;">₹{{ "{:,.0f}".format(s.sale_price) }}</td>
+          <td style="font-size:11px;font-family:'JetBrains Mono',monospace;">{{ s.sale_date }}</td>
+          <td style="color:var(--t3);font-size:12px;">{{ s.notes or '—' }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" style="text-align:center;color:var(--t3);padding:32px;">No sales recorded yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

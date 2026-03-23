@@ -1,0 +1,52 @@
+{% extends 'staff/base.html' %}
+{% block title %}Record Sale — AutoElite Staff{% endblock %}
+{% block page_title %}Record New Sale{% endblock %}
+{% block content %}
+<div style="max-width:650px;">
+  <div class="card">
+    <div class="card-hdr"><span class="card-title">Sale Details</span>
+      <a href="{{ url_for('staff_sales') }}" class="btn btn-ghost btn-sm">← Back</a>
+    </div>
+    <div class="card-body">
+      <form method="POST">
+        <div class="fg" style="gap:16px;">
+          <div class="fgrp fg-full">
+            <label>Vehicle (Available Only)</label>
+            <select name="vehicle_id" required onchange="document.getElementById('sp').value=this.options[this.selectedIndex].dataset.price||''">
+              <option value="">Select vehicle</option>
+              {% for v in vehicles %}
+              <option value="{{ v.vehicle_id }}" data-price="{{ v.price }}">{{ v.mfr }} {{ v.model }} {{ v.year }} — ₹{{ "{:,.0f}".format(v.price) }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="fgrp fg-full">
+            <label>Customer</label>
+            <select name="customer_id" required>
+              <option value="">Select customer</option>
+              {% for c in customers %}
+              <option value="{{ c.customer_id }}">{{ c.name }}{% if c.phone %} ({{ c.phone }}){% endif %}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="fgrp">
+            <label>Sale Price (₹)</label>
+            <input type="number" name="sale_price" id="sp" step="1000" min="0" required>
+          </div>
+          <div class="fgrp">
+            <label>Sale Date</label>
+            <input type="date" name="sale_date" value="{{ today }}" required>
+          </div>
+          <div class="fgrp fg-full">
+            <label>Notes</label>
+            <textarea name="notes" placeholder="Any additional notes..."></textarea>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:18px;">
+          <button type="submit" class="btn" style="background:var(--gold);color:#000;font-weight:700;">💰 Record Sale</button>
+          <a href="{{ url_for('staff_sales') }}" class="btn btn-ghost">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends 'staff/base.html' %}
+{% block title %}{{ action }} Vehicle — AutoElite Staff{% endblock %}
+{% block page_title %}{{ action }} Vehicle{% endblock %}
+{% block content %}
+<div style="max-width:760px;">
+  <div class="card">
+    <div class="card-hdr"><span class="card-title">Vehicle Details</span>
+      <a href="{{ url_for('staff_vehicles') }}" class="btn btn-ghost btn-sm">← Back</a>
+    </div>
+    <div class="card-body">
+      <form method="POST">
+        <div class="fg">
+          <div class="fgrp">
+            <label>Manufacturer</label>
+            <select name="manufacturer_id" required>
+              {% for m in manufacturers %}
+              <option value="{{ m.manufacturer_id }}" {% if vehicle and vehicle.manufacturer_id==m.manufacturer_id %}selected{% endif %}>{{ m.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="fgrp"><label>Model</label><input type="text" name="model" value="{{ vehicle.model if vehicle else '' }}" required></div>
+          <div class="fgrp"><label>Year</label><input type="number" name="year" value="{{ vehicle.year if vehicle else 2024 }}" required></div>
+          <div class="fgrp"><label>Price (₹)</label><input type="number" name="price" value="{{ vehicle.price if vehicle else '' }}" required step="1000"></div>
+          <div class="fgrp"><label>Fuel Type</label>
+            <select name="fuel_type">
+              {% for f in ['Petrol','Diesel','Electric','Hybrid','CNG'] %}
+              <option value="{{ f }}" {% if vehicle and vehicle.fuel_type==f %}selected{% endif %}>{{ f }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="fgrp"><label>Transmission</label>
+            <select name="transmission">
+              {% for t in ['Automatic','Manual','CVT'] %}
+              <option value="{{ t }}" {% if vehicle and vehicle.transmission==t %}selected{% endif %}>{{ t }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="fgrp"><label>Primary Color</label><input type="text" name="color" value="{{ vehicle.color if vehicle else '' }}" placeholder="Pearl White"></div>
+          <div class="fgrp"><label>Mileage (km)</label><input type="number" name="mileage" value="{{ vehicle.mileage if vehicle else 0 }}" min="0"></div>
+          <div class="fgrp fg-full"><label>Available Colors (comma-separated)</label><input type="text" name="available_colors" value="{{ vehicle.available_colors if vehicle else '' }}" placeholder="Pearl White, Midnight Black, Silver"></div>
+          <div class="fgrp fg-full"><label>Image URL</label><input type="url" name="image_url" value="{{ vehicle.image_url if vehicle else '' }}" placeholder="https://..."></div>
+          <div class="fgrp fg-full"><label>Description</label><textarea name="description">{{ vehicle.description if vehicle else '' }}</textarea></div>
+          <div class="fgrp"><label>Status</label>
+            <select name="status">
+              {% for s in ['available','reserved','sold'] %}
+              <option value="{{ s }}" {% if vehicle and vehicle.status==s %}selected{% endif %}>{{ s|title }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:18px;">
+          <button type="submit" class="btn" style="background:var(--accent);color:#fff;">{{ action }} Vehicle</button>
+          <a href="{{ url_for('staff_vehicles') }}" class="btn btn-ghost">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

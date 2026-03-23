@@ -1,0 +1,158 @@
+{% extends 'customer/base.html' %}
+{% block title %}Book Test Drive — Autoverse{% endblock %}
+{% block page_title %}🔑 Book a Test Drive{% endblock %}
+
+{% block content %}
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start;">
+
+  <!-- Booking form -->
+  <div class="card">
+    <div class="card-hdr"><span class="card-title">New Booking</span></div>
+    <div class="card-body">
+      <form method="POST" id="tdForm">
+        <div style="display:flex;flex-direction:column;gap:16px;">
+          <div class="fgrp">
+            <label>Select Car</label>
+            <select name="vehicle_id" required>
+              <option value="">Choose a car...</option>
+              {% for v in vehicles %}
+              <option value="{{ v.vehicle_id }}">{{ v.mfr }} {{ v.model }} {{ v.year }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="fgrp">
+            <label>Preferred Showroom</label>
+            <select name="branch" id="branchSel" required onchange="checkSlots()">
+              <option value="">Select showroom...</option>
+              {% for b in branches %}
+              <option value="{{ b }}">{{ b }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="fgrp">
+            <label>Preferred Date</label>
+            <input type="date" name="preferred_date" id="dateSel" required
+                   min="{{ import_date }}" onchange="checkSlots()">
+          </div>
+
+          <!-- Slot availability -->
+          <div id="slot-section" style="display:none;">
+            <label>Select Time Slot</label>
+            <div id="slots-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px;"></div>
+            <input type="hidden" name="preferred_time" id="selectedTime" required>
+          </div>
+
+          <div class="fgrp">
+            <label>Notes (Optional)</label>
+            <textarea name="notes" placeholder="Any specific requirements or questions..."></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary" id="submitBtn" disabled>Confirm Booking →</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- My bookings -->
+  <div>
+    <div class="card">
+      <div class="card-hdr"><span class="card-title">My Test Drive Bookings</span></div>
+      {% if my_bookings %}
+        {% for b in my_bookings %}
+        <div style="padding:14px 18px;border-bottom:1px solid var(--border);
+                    border-left:3px solid {% if b.status=='confirmed' %}var(--green){% elif b.status=='pending' %}var(--gold){% elif b.status=='completed' %}var(--navy){% else %}var(--t3){% endif %};">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">
+            <div>
+              <div style="font-family:'Fraunces',serif;font-weight:600;font-size:14px;">{{ b.vehicle }}</div>
+              <div style="font-size:12px;color:var(--t3);margin-top:2px;">📍 {{ b.branch }}</div>
+              <div style="font-size:12px;color:var(--t2);margin-top:2px;">📅 {{ b.preferred_date }} at {{ b.preferred_time }}</div>
+            </div>
+            <div style="text-align:right;flex-shrink:0;">
+              <span class="badge
+                {% if b.status=='confirmed' %}b-available
+                {% elif b.status=='pending' %}b-pending
+                {% elif b.status=='completed' %}b-responded
+                {% else %}b-closed{% endif %}">{{ b.status }}</span>
+              {% if b.status in ['pending','confirmed'] %}
+              <form method="POST" action="{{ url_for('customer_cancel_test_drive', id=b.booking_id) }}" style="margin-top:6px;">
+                <button type="submit" class="btn btn-ghost btn-sm" onclick="return confirm('Cancel this booking?')">Cancel</button>
+              </form>
+              {% endif %}
+            </div>
+          </div>
+          {% if b.notes %}
+          <div style="font-size:12px;color:var(--t3);margin-top:6px;font-style:italic;">{{ b.notes }}</div>
+          {% endif %}
+        </div>
+        {% endfor %}
+      {% else %}
+      <div style="padding:32px;text-align:center;color:var(--t3);">No bookings yet.</div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<script>
+const ALL_SLOTS = ['09:00','09:30','10:00','10:30','11:00','11:30','12:00','14:00','14:30','15:00','15:30','16:00','16:30','17:00'];
+let selectedSlot = null;
+
+async function checkSlots() {
+  const branch = document.getElementById('branchSel').value;
+  const date = document.getElementById('dateSel').value;
+  const section = document.getElementById('slot-section');
+  const grid = document.getElementById('slots-grid');
+  if (!branch || !date) { section.style.display='none'; return; }
+
+  // Fetch booked slots
+  const resp = await fetch(`/customer/test-drive?branch=${encodeURIComponent(branch)}&date=${date}`);
+  // Parse booked slots from response (we embed them via data attribute trick)
+  const url = new URL(window.location);
+  url.searchParams.set('branch', branch);
+  url.searchParams.set('date', date);
+
+  section.style.display = 'block';
+  grid.innerHTML = '';
+  selectedSlot = null;
+  document.getElementById('selectedTime').value = '';
+  document.getElementById('submitBtn').disabled = true;
+
+  // Get booked slots via API
+  const apiResp = await fetch(`/api/test-drive-slots?branch=${encodeURIComponent(branch)}&date=${date}`);
+  const data = await apiResp.json();
+  const booked = data.booked || [];
+
+  ALL_SLOTS.forEach(slot => {
+    const isBooked = booked.includes(slot);
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.textContent = slot;
+    btn.style.cssText = `padding:8px;border-radius:8px;font-size:12.5px;font-weight:600;cursor:${isBooked?'not-allowed':'pointer'};
+      border:1.5px solid ${isBooked?'#d4c9b0':'#c84b1f'};
+      background:${isBooked?'#f0ede8':'transparent'};
+      color:${isBooked?'#8a7a6a':'#c84b1f'};
+      transition:all 0.15s;`;
+    if (!isBooked) {
+      btn.onclick = () => selectSlot(slot, btn);
+    } else {
+      btn.title = 'Already booked';
+      btn.innerHTML = `${slot} <span style="font-size:10px;">✗</span>`;
+    }
+    grid.appendChild(btn);
+  });
+}
+
+function selectSlot(slot, btn) {
+  document.querySelectorAll('#slots-grid button').forEach(b => {
+    if (!b.title) { b.style.background='transparent'; b.style.color='#c84b1f'; }
+  });
+  btn.style.background = '#c84b1f';
+  btn.style.color = '#fff';
+  selectedSlot = slot;
+  document.getElementById('selectedTime').value = slot;
+  document.getElementById('submitBtn').disabled = false;
+}
+
+// Set min date to today
+const today = new Date().toISOString().split('T')[0];
+document.getElementById('dateSel').min = today;
+</script>
+{% endblock %}

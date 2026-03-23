@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>{% block title %}Staff — Autoverse{% endblock %}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#050d0f;--bg2:#081215;--bg3:#0d1a1d;--surface:#0f2024;--s2:#142830;--border:#1e3640;--accent:#0e9f8e;--a2:#2dd4bf;--red:#fb7185;--gold:#fbbf24;--green:#34d399;--blue:#60a5fa;--text:#e0f2f1;--t2:#7fa8a0;--t3:#3d6560;--sw:250px;}
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;}
+    .sidebar{width:var(--sw);background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;height:100vh;z-index:100;}
+    .sb-top{padding:20px 16px 14px;border-bottom:1px solid var(--border);}
+    .brand{font-family:'Plus Jakarta Sans',sans-serif;font-size:20px;font-weight:800;color:var(--text);}
+    .brand em{color:var(--a2);font-style:normal;}
+    .branch-tag{margin-top:7px;background:rgba(14,159,142,0.12);border:1px solid rgba(14,159,142,0.35);border-radius:6px;padding:5px 10px;font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--a2);font-weight:500;}
+    .nav{padding:12px 10px;flex:1;overflow-y:auto;}
+    .nav-lbl{font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--t3);font-family:'JetBrains Mono',monospace;padding:0 9px;margin-bottom:5px;display:block;margin-top:14px;}
+    .nav-a{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:8px;color:var(--t2);text-decoration:none;font-size:13px;font-weight:600;transition:all 0.15s;margin-bottom:1px;}
+    .nav-a:hover{background:var(--s2);color:var(--text);}
+    .nav-a.active{background:var(--accent);color:#fff;}
+    .sb-foot{padding:12px;border-top:1px solid var(--border);}
+    .ucard{display:flex;align-items:center;gap:9px;padding:9px 11px;background:var(--surface);border-radius:9px;border:1px solid var(--border);}
+    .uav{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--a2));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;flex-shrink:0;}
+    .uname{font-size:12.5px;font-weight:700;}.urole{font-size:9px;color:var(--a2);font-family:'JetBrains Mono',monospace;}
+    .logout{margin-left:auto;color:var(--t3);text-decoration:none;font-size:16px;transition:color 0.15s;}.logout:hover{color:var(--red);}
+    .main{margin-left:var(--sw);flex:1;display:flex;flex-direction:column;}
+    .topbar{height:54px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 22px;gap:12px;position:sticky;top:0;z-index:50;}
+    .tb-title{font-size:17px;font-weight:700;flex:1;}
+    .content{padding:22px;flex:1;}
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:11px;overflow:hidden;}
+    .card-hdr{padding:13px 17px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+    .card-title{font-size:14px;font-weight:700;}
+    .card-body{padding:17px;}
+    .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:11px;margin-bottom:18px;}
+    .stat{background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:16px;position:relative;overflow:hidden;}
+    .stat::before{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;}
+    .stat.teal::before{background:var(--accent);}.stat.red::before{background:var(--red);}.stat.gold::before{background:var(--gold);}.stat.green::before{background:var(--green);}.stat.blue::before{background:var(--blue);}
+    .stat-val{font-size:26px;font-weight:800;line-height:1;margin:5px 0 3px;}
+    .stat-lbl{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--t3);font-family:'JetBrains Mono',monospace;}
+    .stat-ic{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:22px;opacity:0.1;}
+    .tw{overflow-x:auto;}
+    table{width:100%;border-collapse:collapse;font-size:12.5px;}
+    thead tr{background:var(--bg3);}
+    th{padding:10px 13px;text-align:left;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--t3);font-family:'JetBrains Mono',monospace;font-weight:400;white-space:nowrap;}
+    td{padding:11px 13px;border-bottom:1px solid var(--border);color:var(--t2);vertical-align:middle;}
+    tr:last-child td{border-bottom:none;}
+    tr:hover td{background:var(--s2);}
+    .td-main{color:var(--text);font-weight:700;}
+    .badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600;text-transform:capitalize;font-family:'JetBrains Mono',monospace;}
+    .b-available{background:rgba(52,211,153,0.13);color:var(--green);border:1px solid rgba(52,211,153,0.3);}
+    .b-sold{background:rgba(251,113,133,0.13);color:var(--red);border:1px solid rgba(251,113,133,0.3);}
+    .b-reserved,.b-pending{background:rgba(251,191,36,0.13);color:var(--gold);border:1px solid rgba(251,191,36,0.3);}
+    .b-responded{background:rgba(96,165,250,0.13);color:var(--blue);border:1px solid rgba(96,165,250,0.3);}
+    .b-closed{background:rgba(61,101,96,0.13);color:var(--t3);border:1px solid var(--border);}
+    .btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:7px;border:none;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-size:12.5px;font-weight:700;transition:all 0.15s;text-decoration:none;white-space:nowrap;}
+    .btn-primary{background:var(--accent);color:#fff;}.btn-primary:hover{background:#0b8a7a;}
+    .btn-ghost{background:transparent;color:var(--t2);border:1px solid var(--border);}.btn-ghost:hover{background:var(--s2);color:var(--text);}
+    .btn-danger{background:rgba(251,113,133,0.12);color:var(--red);border:1px solid rgba(251,113,133,0.3);}.btn-danger:hover{background:var(--red);color:#fff;}
+    .btn-sm{padding:5px 10px;font-size:11.5px;}
+    .fg{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;}
+    .fg-full{grid-column:1/-1;}.fgrp{display:flex;flex-direction:column;gap:5px;}
+    label{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3);font-family:'JetBrains Mono',monospace;}
+    input,select,textarea{background:var(--bg3);border:1px solid var(--border);border-radius:7px;color:var(--text);padding:9px 12px;font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;transition:border-color 0.2s;outline:none;width:100%;}
+    input:focus,select:focus,textarea:focus{border-color:var(--accent);}
+    select option{background:var(--bg3);}
+    textarea{resize:vertical;min-height:75px;}
+    .sbar{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:16px;}
+    .alert{padding:10px 15px;border-radius:7px;font-size:12.5px;margin-bottom:14px;border:1px solid;}
+    .alert-success{background:rgba(52,211,153,0.09);border-color:rgba(52,211,153,0.3);color:var(--green);}
+    .alert-danger{background:rgba(251,113,133,0.09);border-color:rgba(251,113,133,0.3);color:var(--red);}
+    .alert-warning{background:rgba(251,191,36,0.09);border-color:rgba(251,191,36,0.3);color:var(--gold);}
+    .alert-info{background:rgba(96,165,250,0.09);border-color:rgba(96,165,250,0.3);color:var(--blue);}
+    .mono{font-family:'JetBrains Mono',monospace;}
+    .text-muted{color:var(--t3);}.text-green{color:var(--green);}.text-gold{color:var(--gold);}.text-red{color:var(--red);}
+    .fw7{font-weight:700;}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+    .notif-badge{background:var(--red);color:#fff;border-radius:10px;padding:1px 6px;font-size:10px;font-weight:700;margin-left:auto;}
+  </style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sb-top">
+    <div class="brand"><span style="font-size:0.9em;font-weight:800;">AUTOVERSE</span><span style="display:block;font-size:0.38em;letter-spacing:2px;font-weight:400;opacity:0.7;margin-top:-2px;">by Safari Motors</span></div>
+    {% if staff_info is defined and staff_info %}
+    <div class="branch-tag">📍 {{ staff_info.branch }}</div>
+    {% endif %}
+  </div>
+  <nav class="nav">
+    <span class="nav-lbl">Dashboard</span>
+    <a href="{{ url_for('staff_dashboard') }}" class="nav-a {% if request.endpoint=='staff_dashboard' %}active{% endif %}">⬡ My Dashboard</a>
+    <span class="nav-lbl">Inventory</span>
+    <a href="{{ url_for('staff_vehicles') }}" class="nav-a {% if 'vehicle' in request.endpoint and 'staff' in request.endpoint %}active{% endif %}">🚗 Vehicles</a>
+    <span class="nav-lbl">Transactions</span>
+    <a href="{{ url_for('staff_inquiries') }}" class="nav-a {% if 'inquir' in request.endpoint and 'staff' in request.endpoint %}active{% endif %}">
+      💬 Branch Inquiries <span class="notif-badge" id="inq-badge" style="display:none"></span>
+    </a>
+    <a href="{{ url_for('staff_sales') }}" class="nav-a {% if 'sale' in request.endpoint and 'staff' in request.endpoint %}active{% endif %}">💰 My Sales</a>
+    <a href="{{ url_for('staff_test_drives') }}" class="nav-a {% if 'test_drive' in request.endpoint and 'staff' in request.endpoint %}active{% endif %}">
+      🔑 Test Drives <span class="notif-badge" id="td-badge" style="display:none"></span>
+    </a>
+    <span class="nav-lbl">Customers</span>
+    <a href="{{ url_for('staff_customers') }}" class="nav-a {% if 'customer' in request.endpoint and 'staff' in request.endpoint %}active{% endif %}">👥 Customers</a>
+  </nav>
+  <div class="sb-foot">
+    <div class="ucard">
+      <div class="uav">{{ session.username[0].upper() }}</div>
+      <div><div class="uname">{{ session.username }}</div><div class="urole">Staff</div></div>
+      <a href="{{ url_for('logout') }}" class="logout" title="Logout">⎋</a>
+    </div>
+  </div>
+</aside>
+<div class="main">
+  <div class="topbar">
+    <div class="tb-title">{% block page_title %}Dashboard{% endblock %}</div>
+    <div style="display:flex;gap:8px;align-items:center;">{% block topbar_actions %}{% endblock %}</div>
+  </div>
+  <div class="content">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}{% for cat,msg in messages %}<div class="alert alert-{{ cat }}">{{ msg }}</div>{% endfor %}{% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </div>
+</div>
+<script>
+setTimeout(()=>{document.querySelectorAll('.alert').forEach(a=>{a.style.transition='opacity 0.5s';a.style.opacity='0';setTimeout(()=>a.remove(),500);});},3500);
+function pollNotifications(){
+  fetch('/api/notifications').then(r=>r.json()).then(d=>{
+    const ib=document.getElementById('inq-badge');
+    const tb=document.getElementById('td-badge');
+    if(ib){if(d.inquiry_unread>0){ib.textContent=d.inquiry_unread;ib.style.display='inline';}else{ib.style.display='none';}}
+    if(tb){if(d.test_drive_pending>0){tb.textContent=d.test_drive_pending;tb.style.display='inline';}else{tb.style.display='none';}}
+  }).catch(()=>{});
+}
+pollNotifications(); setInterval(pollNotifications,15000);
+</script>
+</body></html>

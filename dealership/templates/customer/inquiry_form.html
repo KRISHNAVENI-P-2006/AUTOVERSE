@@ -1,0 +1,59 @@
+{% extends 'customer/base.html' %}
+{% block title %}New Inquiry — AutoElite{% endblock %}
+{% block page_title %}Send an Inquiry{% endblock %}
+{% block content %}
+<div style="max-width:600px;">
+  <div class="card">
+    <div class="card-hdr">
+      <span class="card-title">Inquiry Details</span>
+      <a href="{{ url_for('customer_inquiries') }}" class="btn btn-ghost btn-sm">← Back</a>
+    </div>
+    <div class="card-body">
+      <form method="POST">
+        <div class="fg" style="gap:16px;">
+          <div class="fgrp fg-full">
+            <label>Vehicle of Interest</label>
+            <select name="vehicle_id" id="vehicleSelect" required onchange="updateVehicleInfo()">
+              <option value="">Select a vehicle</option>
+              {% for v in vehicles %}
+              <option value="{{ v.vehicle_id }}" {% if preselect_vid==v.vehicle_id|string %}selected{% endif %}>
+                {{ v.mfr }} {{ v.model }} {{ v.year }} — ₹{{ "{:,.0f}".format(v.price) }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="fgrp fg-full">
+            <label>Select Branch / Showroom</label>
+            <select name="branch" id="branchSelect" required>
+              <option value="">Select showroom location</option>
+              {% for b in branches %}
+              <option value="{{ b }}">{{ b }}</option>
+              {% endfor %}
+            </select>
+            <div style="font-size:11px;color:var(--t3);margin-top:4px;">Your inquiry will be sent only to staff at the selected branch.</div>
+          </div>
+
+          <div class="fgrp fg-full">
+            <label>Your Message</label>
+            <textarea name="message" rows="5" placeholder="E.g. I am interested in a test drive, please let me know availability. Also interested in EMI options..."></textarea>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:20px;">
+          <button type="submit" class="btn btn-primary">Send Inquiry →</button>
+          <a href="{{ url_for('customer_browse') }}" class="btn btn-ghost">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+// Pre-select vehicle if coming from detail page
+const preVid = "{{ preselect_vid }}";
+if (preVid) {
+  const sel = document.getElementById('vehicleSelect');
+  for (let opt of sel.options) { if (opt.value == preVid) { opt.selected = true; break; } }
+}
+</script>
+{% endblock %}

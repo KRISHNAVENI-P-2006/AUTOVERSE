@@ -1,0 +1,11 @@
+{% extends 'admin/base.html' %}
+{% block page_title %}Users{% endblock %}
+{% block topbar_actions %}<a href="{{ url_for('admin_add_user') }}" class="btn btn-primary btn-sm">+ Add User</a>{% endblock %}
+{% block content %}
+<div class="card"><div class="card-hdr"><span class="card-title">{{ users|length }} Users</span></div>
+<div class="tw"><table><thead><tr><th>ID</th><th>Username</th><th>Role</th><th>Actions</th></tr></thead><tbody>
+{% for u in users %}
+<tr><td class="mono text-muted">#{{u.user_id}}</td><td class="td-main">{{u.username}}</td><td><span class="badge b-{{u.role}}">{{u.role}}</span></td>
+<td>{% if u.user_id != session.user_id %}<form method="POST" action="{{ url_for('admin_delete_user',id=u.user_id) }}" onsubmit="return confirm('Delete user?')"><button class="btn btn-danger btn-sm">Delete</button></form>{% else %}<span class="text-muted" style="font-size:11px;">(You)</span>{% endif %}</td></tr>
+{% endfor %}</tbody></table></div></div>
+{% endblock %}

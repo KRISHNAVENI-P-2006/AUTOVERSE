@@ -1,0 +1,62 @@
+{% extends 'admin/base.html' %}
+{% block page_title %}Reports{% endblock %}
+{% block content %}
+<div class="stats">
+  <div class="stat gold"><div class="stat-lbl">Total Revenue</div><div class="stat-val">{{ fmt_inr(totals.total_revenue) }}</div></div>
+  <div class="stat blue"><div class="stat-lbl">Total Sales</div><div class="stat-val">{{ totals.total_sales }}</div></div>
+  <div class="stat green"><div class="stat-lbl">Avg Sale</div><div class="stat-val">{{ fmt_inr(totals.avg_sale) }}</div></div>
+  <div class="stat indigo"><div class="stat-lbl">Highest Sale</div><div class="stat-val">{{ fmt_inr(totals.max_sale) }}</div></div>
+</div>
+
+<!-- Revenue by Showroom — NEW SECTION -->
+<div class="card" style="margin-bottom:16px;">
+  <div class="card-hdr"><span class="card-title">📍 Revenue by Showroom</span></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;">
+    <div class="card-body" style="padding:0;">
+      <div class="tw">
+        <table>
+          <thead><tr><th>Showroom</th><th>Sales</th><th>Revenue</th><th>Avg Sale</th><th>Inquiries</th></tr></thead>
+          <tbody>
+            {% for b in branch_rev %}
+            <tr>
+              <td class="td-main" style="font-size:12px;">{{ b.branch }}</td>
+              <td class="mono">{{ b.sales_count }}</td>
+              <td class="text-gold fw6">{{ fmt_inr(b.revenue) }}</td>
+              <td style="color:var(--t2);font-size:12px;">{{ fmt_inr(b.avg_sale) }}</td>
+              <td class="mono">{{ b.inquiries }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card-body"><canvas id="branchChart" height="200"></canvas></div>
+  </div>
+</div>
+
+<div class="grid2" style="margin-bottom:16px;">
+  <div class="card"><div class="card-hdr"><span class="card-title">Monthly Revenue</span></div><div class="card-body"><canvas id="mChart" height="180"></canvas></div></div>
+  <div class="card"><div class="card-hdr"><span class="card-title">Fuel Type Distribution</span></div><div class="card-body"><canvas id="fChart" height="180"></canvas></div></div>
+</div>
+
+<div class="grid2" style="margin-bottom:16px;">
+  <div class="card"><div class="card-hdr"><span class="card-title">Staff Performance</span></div><div class="tw">
+    <table><thead><tr><th>Staff</th><th>Branch</th><th>Sales</th><th>Revenue</th></tr></thead><tbody>
+    {% for s in staff_perf %}<tr><td class="td-main">{{s.name}}</td><td style="font-size:11px;">{{s.branch}}</td><td class="mono">{{s.sales_count}}</td><td class="text-gold fw6">{{ fmt_inr(s.total_revenue) }}</td></tr>{% endfor %}
+    </tbody></table></div></div>
+  <div class="card"><div class="card-hdr"><span class="card-title">Revenue by Manufacturer</span></div><div class="card-body"><canvas id="mfrChart" height="200"></canvas></div></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script>
+const gc='#272840',tc='#8b8fa8',tf={family:'IBM Plex Mono',size:9};
+const m=JSON.parse('{{ monthly|tojson|safe }}');
+new Chart(document.getElementById('mChart'),{type:'bar',data:{labels:m.map(d=>d.month).reverse(),datasets:[{data:m.map(d=>d.revenue||0).reverse(),backgroundColor:'rgba(99,102,241,0.6)',borderColor:'#6366f1',borderWidth:1,borderRadius:4}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{grid:{color:gc},ticks:{color:tc,font:tf}},y:{grid:{color:gc},ticks:{color:tc,font:tf}}}}});
+const f=JSON.parse('{{ fuel_stats|tojson|safe }}');
+new Chart(document.getElementById('fChart'),{type:'doughnut',data:{labels:f.map(d=>d.fuel_type||'Unknown'),datasets:[{data:f.map(d=>d.count),backgroundColor:['#6366f1','#f59e0b','#10b981','#38bdf8','#f43f5e'],borderWidth:2,borderColor:'#181926'}]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{color:tc,font:tf,padding:8}}}}});
+const mr=JSON.parse('{{ mfr_rev|tojson|safe }}');
+new Chart(document.getElementById('mfrChart'),{type:'bar',data:{labels:mr.map(d=>d.name),datasets:[{data:mr.map(d=>d.revenue||0),backgroundColor:'rgba(245,158,11,0.6)',borderColor:'#f59e0b',borderWidth:1,borderRadius:4}]},options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false}},scales:{x:{grid:{color:gc},ticks:{color:tc,font:tf}},y:{grid:{color:gc},ticks:{color:tc,font:tf}}}}});
+const br=JSON.parse('{{ branch_rev|tojson|safe }}');
+new Chart(document.getElementById('branchChart'),{type:'bar',data:{labels:br.map(d=>d.branch.replace(' Showroom','')),datasets:[{data:br.map(d=>d.revenue||0),backgroundColor:'rgba(16,185,129,0.6)',borderColor:'#10b981',borderWidth:1,borderRadius:4}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{grid:{color:gc},ticks:{color:tc,font:tf}},y:{grid:{color:gc},ticks:{color:tc,font:tf}}}}});
+</script>
+{% endblock %}

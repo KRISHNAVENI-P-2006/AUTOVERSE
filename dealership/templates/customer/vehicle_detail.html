@@ -1,0 +1,133 @@
+{% extends 'customer/base.html' %}
+{% block title %}{{ vehicle.manufacturer_name }} {{ vehicle.model }} — AutoElite{% endblock %}
+{% block page_title %}{{ vehicle.manufacturer_name }} {{ vehicle.model }}{% endblock %}
+{% block topbar_actions %}
+  <a href="{{ url_for('customer_browse') }}" class="btn btn-ghost btn-sm">← Back to Browse</a>
+{% endblock %}
+
+{% block content %}
+<div style="display:grid;grid-template-columns:1fr 380px;gap:24px;align-items:start;">
+
+  <!-- Left: Image + Details -->
+  <div>
+    <!-- Main image -->
+    <div style="border-radius:14px;overflow:hidden;margin-bottom:20px;border:1px solid var(--border);">
+      <img src="{{ vehicle.image_url or 'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=800&q=80' }}"
+           alt="{{ vehicle.model }}" style="width:100%;height:340px;object-fit:cover;">
+    </div>
+
+    <!-- Key specs grid -->
+    <div class="card" style="margin-bottom:20px;">
+      <div class="card-hdr"><span class="card-title">🔧 Specifications</span></div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0;">
+        {% set specs = [
+          ('🏭', 'Brand', vehicle.manufacturer_name),
+          ('📅', 'Year', vehicle.year),
+          ('⛽', 'Fuel', vehicle.fuel_type),
+          ('⚙️', 'Transmission', vehicle.transmission),
+          ('🛣️', 'Mileage', ('{:,}'.format(vehicle.mileage or 0)) ~ ' km'),
+          ('🌍', 'Origin', vehicle.country or '—'),
+        ] %}
+        {% for icon, label, val in specs %}
+        <div style="padding:16px 18px;border-bottom:1px solid var(--border);border-right:1px solid var(--border);">
+          <div style="font-size:18px;margin-bottom:4px;">{{ icon }}</div>
+          <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--t3);">{{ label }}</div>
+          <div style="font-size:14px;font-weight:600;color:var(--text);margin-top:2px;">{{ val }}</div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Description -->
+    {% if vehicle.description %}
+    <div class="card" style="margin-bottom:20px;">
+      <div class="card-hdr"><span class="card-title">📝 About this Car</span></div>
+      <div class="card-body" style="font-size:14px;line-height:1.7;color:var(--t2);">{{ vehicle.description }}</div>
+    </div>
+    {% endif %}
+
+    <!-- Available Colours -->
+    {% if vehicle.available_colors %}
+    <div class="card" style="margin-bottom:20px;">
+      <div class="card-hdr"><span class="card-title">🎨 Available Colours</span></div>
+      <div class="card-body">
+        <div style="display:flex;flex-wrap:wrap;gap:12px;">
+          {% set cmap = {'Pearl White':'#f0ede8','Pearl Arctic White':'#f5f5f5','White':'#f5f5f5','Grandeur Grey':'#8a8a90','Midnight Black Blue':'#1a1a2e','Midnight Black':'#111','Black':'#222','Sizzling Red':'#c0392b','Red':'#c0392b','Fiery Red':'#d44c1e','Brave Khaki':'#8a7a5a','Ranger Khaki':'#7a6a50','Atlas White':'#e8e8e8','Typhoon Silver':'#b0b0b0','Silver':'#b0b0b0','Abyss Black':'#1a1a1a','Lucent Orange':'#e07030','Splendid Silver':'#c0c0c8','Starry Night Blue':'#1a2a4a','Blue':'#2a5fc4','Gravity Grey':'#6a6a70','Clear White':'#f8f8f8','Intense Red':'#c0301a','Pewter Olive':'#6a7050','Aurora Black Pearl':'#1a1a22','Calgary White':'#f0f0ec','Flame Red':'#d03020','Daytona Grey':'#5a5a60','Tropical Mist':'#a0b0a8','Creative Ocean':'#2a5a70','Napoli Black':'#151520','Everest White':'#f4f4f0','Deep Forest':'#2a4030','Red Rage':'#c02020','Burnt Sienna':'#8a4020','Platinum White Pearl':'#f4f0ec','Meteoroid Gray':'#707078','Lunar Silver':'#b4b4bc','Golden Brown':'#8a6030','Super White':'#f8f8f8','Bronze Mica Metallic':'#8a6840','Attitude Black Mica':'#1a1a1a','Coral Red':'#e05040','Candy White':'#f8f8f4','Glaze Red':'#d04030'} %}
+          {% for col in vehicle.available_colors.split(',') %}
+          <div style="display:flex;align-items:center;gap:7px;">
+            <span style="width:20px;height:20px;border-radius:50%;background:{{ cmap.get(col.strip(), '#aaa') }};
+                         border:2px solid var(--border2);display:inline-block;box-shadow:0 1px 3px rgba(0,0,0,0.2);"></span>
+            <span style="font-size:12.5px;color:var(--t2);">{{ col.strip() }}</span>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- EMI Plans -->
+    <div class="card">
+      <div class="card-hdr"><span class="card-title">💳 EMI Plans <span style="font-size:11px;font-weight:400;color:var(--t3);">(10% down, 8.5% p.a.)</span></span></div>
+      <div class="card-body">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;">
+          {% for plan in emi_plans %}
+          <div style="padding:14px;border:1px solid var(--border);border-radius:10px;text-align:center;
+                      {% if plan.months==60 %}background:rgba(200,75,31,0.05);border-color:var(--accent);{% endif %}">
+            {% if plan.months==60 %}<div style="font-size:9px;color:var(--accent);font-weight:600;margin-bottom:4px;">POPULAR</div>{% endif %}
+            <div style="font-size:11px;color:var(--t3);">{{ plan.months }} months</div>
+            <div style="font-family:'Fraunces',serif;font-size:20px;font-weight:600;color:var(--accent);margin:4px 0;">₹{{ "{:,}".format(plan.emi) }}</div>
+            <div style="font-size:10px;color:var(--t3);">/month</div>
+            <div style="font-size:10px;color:var(--t3);margin-top:4px;">Down: ₹{{ "{:,}".format(plan.down) }}</div>
+          </div>
+          {% endfor %}
+        </div>
+        <div style="font-size:11px;color:var(--t3);margin-top:10px;">* EMI is indicative. Actual rates vary by financier.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right: Price + Actions -->
+  <div style="position:sticky;top:80px;">
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-body">
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--t3);">Ex-showroom Price</div>
+        <div style="font-family:'Fraunces',serif;font-size:34px;font-weight:700;color:var(--accent);margin:6px 0;">
+          ₹{{ "{:,.0f}".format(vehicle.price) }}
+        </div>
+        <div style="font-size:12px;color:var(--t3);margin-bottom:16px;">+ taxes & registration extra</div>
+
+        {% if vehicle.status == 'available' %}
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <a href="{{ url_for('customer_add_inquiry', vehicle_id=vehicle.vehicle_id) }}" class="btn btn-primary" style="justify-content:center;padding:12px;">
+            💬 Send Inquiry
+          </a>
+          <!-- Wishlist toggle -->
+          <form method="POST" action="{{ url_for('customer_toggle_wishlist', vid=vehicle.vehicle_id) }}">
+            <button type="submit" class="btn btn-ghost" style="width:100%;justify-content:center;padding:12px;">
+              {{ '❤️ Remove from Wishlist' if in_wishlist else '🤍 Add to Wishlist' }}
+            </button>
+          </form>
+        </div>
+        {% else %}
+        <div style="padding:12px;background:rgba(200,75,31,0.08);border-radius:8px;text-align:center;color:var(--accent);font-weight:600;">
+          This vehicle is {{ vehicle.status }}
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Quick info card -->
+    <div class="card">
+      <div class="card-body" style="font-size:13px;">
+        <div style="font-weight:600;margin-bottom:12px;color:var(--text);">Quick Summary</div>
+        {% for label, val in [('Model', vehicle.model), ('Brand', vehicle.manufacturer_name), ('Year', vehicle.year), ('Fuel', vehicle.fuel_type), ('Transmission', vehicle.transmission)] %}
+        <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);">
+          <span style="color:var(--t3);">{{ label }}</span>
+          <span style="font-weight:500;">{{ val }}</span>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

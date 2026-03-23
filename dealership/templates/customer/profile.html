@@ -1,0 +1,62 @@
+{% extends 'customer/base.html' %}
+{% block title %}My Profile — AutoElite{% endblock %}
+{% block page_title %}My Profile{% endblock %}
+{% block content %}
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:900px;">
+
+  <!-- Profile info -->
+  <div class="card">
+    <div class="card-hdr"><span class="card-title">👤 Personal Details</span></div>
+    <div class="card-body">
+      <form method="POST">
+        <input type="hidden" name="action" value="update_profile">
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <div class="fgrp">
+            <label>Full Name</label>
+            <input type="text" name="name" value="{{ cust.name }}" required>
+          </div>
+          <div class="fgrp">
+            <label>Phone</label>
+            <input type="tel" name="phone" value="{{ cust.phone or '' }}">
+          </div>
+          <div class="fgrp">
+            <label>Email</label>
+            <input type="email" name="email" value="{{ cust.email or '' }}">
+          </div>
+          <div class="fgrp">
+            <label>Address</label>
+            <textarea name="address">{{ cust.address or '' }}</textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Change password -->
+  <div class="card">
+    <div class="card-hdr"><span class="card-title">🔒 Change Password</span></div>
+    <div class="card-body">
+      <form method="POST">
+        <input type="hidden" name="action" value="change_password">
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <div class="fgrp">
+            <label>Current Password</label>
+            <input type="password" name="current_password" required>
+          </div>
+          <div class="fgrp">
+            <label>New Password</label>
+            <input type="password" name="new_password" required minlength="6">
+          </div>
+          <div class="fgrp">
+            <label>Confirm New Password</label>
+            <input type="password" name="confirm_password" required>
+          </div>
+          <button type="submit" class="btn btn-navy">Update Password</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

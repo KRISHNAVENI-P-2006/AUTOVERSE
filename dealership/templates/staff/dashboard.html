@@ -1,0 +1,84 @@
+{% extends 'staff/base.html' %}
+{% block title %}Staff Dashboard — AutoElite{% endblock %}
+{% block page_title %}Dashboard — {{ staff.branch }}{% endblock %}
+{% block content %}
+<div class="stats">
+  <div class="stat teal">
+    <div class="stat-lbl">Branch Inquiries</div>
+    <div class="stat-val" style="color:var(--a2);">{{ stats.branch_inq }}</div>
+    <div class="stat-ic">💬</div>
+  </div>
+  <div class="stat red">
+    <div class="stat-lbl">Pending</div>
+    <div class="stat-val" style="color:var(--red);">{{ stats.pending_inq }}</div>
+    <div class="stat-ic">⏳</div>
+  </div>
+  <div class="stat gold">
+    <div class="stat-lbl">My Sales</div>
+    <div class="stat-val" style="color:var(--gold);">{{ stats.my_sales }}</div>
+    <div class="stat-ic">💰</div>
+  </div>
+  <div class="stat green">
+    <div class="stat-lbl">My Revenue</div>
+    <div class="stat-val" style="color:var(--green);font-size:20px;">₹{{ "{:,.0f}".format(stats.my_revenue) }}</div>
+    <div class="stat-ic">📊</div>
+  </div>
+  <div class="stat blue">
+    <div class="stat-lbl">Available Cars</div>
+    <div class="stat-val" style="color:var(--blue);">{{ stats.available }}</div>
+    <div class="stat-ic">🚗</div>
+  </div>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+  <!-- Pending Branch Inquiries -->
+  <div class="card">
+    <div class="card-hdr">
+      <span class="card-title">🔔 Branch Inquiries</span>
+      <a href="{{ url_for('staff_inquiries') }}" class="btn btn-ghost btn-sm">View All</a>
+    </div>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Customer</th><th>Vehicle</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+          {% for i in recent_inq %}
+          <tr>
+            <td class="td-main">{{ i.customer_name }}</td>
+            <td style="font-size:12px;">{{ i.vehicle }}</td>
+            <td><span class="badge b-{{ i.status }}">{{ i.status }}</span></td>
+            <td><a href="{{ url_for('staff_inquiry_chat', id=i.inquiry_id) }}" class="btn btn-ghost btn-sm">Reply</a></td>
+          </tr>
+          {% else %}
+          <tr><td colspan="4" style="text-align:center;color:var(--t3);padding:24px;">No inquiries</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- My Recent Sales -->
+  <div class="card">
+    <div class="card-hdr">
+      <span class="card-title">💰 My Recent Sales</span>
+      <a href="{{ url_for('staff_sales') }}" class="btn btn-ghost btn-sm">View All</a>
+    </div>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Vehicle</th><th>Customer</th><th>Price</th><th>Date</th></tr></thead>
+        <tbody>
+          {% for s in recent_sales %}
+          <tr>
+            <td class="td-main">{{ s.vehicle }}</td>
+            <td>{{ s.customer_name }}</td>
+            <td style="color:var(--gold);font-weight:700;">₹{{ "{:,.0f}".format(s.sale_price) }}</td>
+            <td style="font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--t3);">{{ s.sale_date }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="4" style="text-align:center;color:var(--t3);padding:24px;">No sales yet</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

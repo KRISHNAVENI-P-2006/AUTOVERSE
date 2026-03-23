@@ -1,0 +1,52 @@
+{% extends 'staff/base.html' %}
+{% block title %}Respond to Inquiry — AutoElite{% endblock %}
+{% block page_title %}Respond to Inquiry{% endblock %}
+{% block content %}
+<div style="max-width:700px;">
+  <div class="card" style="margin-bottom:16px;">
+    <div class="card-hdr"><span class="card-title">Inquiry Details</span>
+      <a href="{{ url_for('staff_inquiries') }}" class="btn btn-ghost btn-sm">← Back</a>
+    </div>
+    <div class="card-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:13.5px;margin-bottom:14px;">
+        <div><span style="color:var(--t3);">Customer: </span><strong>{{ inquiry.customer_name }}</strong></div>
+        <div><span style="color:var(--t3);">Phone: </span><strong>{{ inquiry.customer_phone or '—' }}</strong></div>
+        <div><span style="color:var(--t3);">Vehicle: </span><strong>{{ inquiry.vehicle }}</strong></div>
+        <div><span style="color:var(--t3);">Date: </span><strong>{{ inquiry.inquiry_date }}</strong></div>
+      </div>
+      {% if inquiry.message %}
+      <div style="background:var(--bg3);padding:12px 14px;border-radius:8px;border-left:3px solid var(--accent);">
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--t3);margin-bottom:5px;">Customer's Message</div>
+        <div style="font-size:13.5px;color:var(--text);">{{ inquiry.message }}</div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-hdr"><span class="card-title">Your Response</span></div>
+    <div class="card-body">
+      <form method="POST">
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <div class="fgrp">
+            <label>Response Message</label>
+            <textarea name="response" rows="5" placeholder="Write your response to the customer...">{{ inquiry.response or '' }}</textarea>
+          </div>
+          <div class="fgrp">
+            <label>Update Status</label>
+            <select name="status">
+              <option value="pending" {% if inquiry.status=='pending' %}selected{% endif %}>⏳ Pending</option>
+              <option value="responded" {% if inquiry.status=='responded' %}selected{% endif %}>✅ Responded</option>
+              <option value="closed" {% if inquiry.status=='closed' %}selected{% endif %}>🔒 Closed</option>
+            </select>
+          </div>
+          <div style="display:flex;gap:10px;">
+            <button type="submit" class="btn" style="background:var(--accent);color:#fff;">Send Response</button>
+            <a href="{{ url_for('staff_inquiries') }}" class="btn btn-ghost">Cancel</a>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends 'customer/base.html' %}
+{% block title %}My Purchases — AutoElite{% endblock %}
+{% block page_title %}My Purchases{% endblock %}
+{% block content %}
+{% if purchases %}
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;">
+  {% for p in purchases %}
+  <div class="card">
+    <img src="{{ p.image_url or 'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=600&q=80' }}"
+         style="width:100%;height:160px;object-fit:cover;" alt="{{ p.vehicle }}">
+    <div style="padding:16px;">
+      <div style="font-family:'Fraunces',serif;font-size:17px;font-weight:600;">{{ p.vehicle }}</div>
+      <div style="font-size:12px;color:var(--t3);margin:3px 0 10px;">{{ p.year }} · {{ p.color }} · {{ p.fuel_type }}</div>
+      <div style="font-family:'Fraunces',serif;font-size:20px;font-weight:700;color:var(--green);margin-bottom:10px;">₹{{ "{:,.0f}".format(p.sale_price) }}</div>
+      <div style="font-size:12px;color:var(--t3);border-top:1px solid var(--border);padding-top:10px;">
+        <div>📅 Purchased: <strong>{{ p.sale_date }}</strong></div>
+        <div style="margin-top:4px;">🏬 Branch: {{ p.branch }}</div>
+        <div style="margin-top:4px;">🧑‍💼 Sales Executive: {{ p.staff_name }}</div>
+        {% if p.staff_phone %}<div style="margin-top:4px;">📞 {{ p.staff_phone }}</div>{% endif %}
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div style="text-align:center;padding:70px;">
+  <div style="font-size:50px;margin-bottom:14px;">🚗</div>
+  <div style="font-family:'Fraunces',serif;font-size:20px;font-weight:600;margin-bottom:8px;">No purchases yet</div>
+  <div style="color:var(--t3);margin-bottom:20px;">Browse our collection and inquire about a vehicle</div>
+  <a href="{{ url_for('customer_browse') }}" class="btn btn-primary">Browse Cars</a>
+</div>
+{% endif %}
+{% endblock %}

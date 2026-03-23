@@ -1,0 +1,44 @@
+{% extends 'staff/base.html' %}
+{% block title %}Vehicles — AutoElite Staff{% endblock %}
+{% block page_title %}Vehicle Inventory{% endblock %}
+{% block topbar_actions %}
+  <a href="{{ url_for('staff_add_vehicle') }}" class="btn btn-sm" style="background:var(--accent);color:#fff;">+ Add Vehicle</a>
+{% endblock %}
+{% block content %}
+<div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
+  <form method="GET" style="display:flex;gap:8px;flex-wrap:wrap;">
+    <input type="text" name="search" value="{{ search }}" placeholder="Search..." style="width:220px;">
+    <select name="status" onchange="this.form.submit()">
+      <option value="">All Status</option>
+      {% for s in ['available','sold','reserved'] %}
+      <option value="{{ s }}" {% if status_filter==s %}selected{% endif %}>{{ s|title }}</option>
+      {% endfor %}
+    </select>
+    <button type="submit" class="btn btn-ghost btn-sm">Search</button>
+  </form>
+</div>
+<div class="card">
+  <div class="card-hdr"><span class="card-title">{{ vehicles|length }} Vehicles</span></div>
+  <div class="tw">
+    <table>
+      <thead><tr><th>ID</th><th>Brand</th><th>Model</th><th>Year</th><th>Fuel</th><th>Price</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody>
+        {% for v in vehicles %}
+        <tr>
+          <td style="font-family:'JetBrains Mono',monospace;color:var(--t3);">#{{ v.vehicle_id }}</td>
+          <td>{{ v.manufacturer_name }}</td>
+          <td class="td-main">{{ v.model }}</td>
+          <td>{{ v.year }}</td>
+          <td>{{ v.fuel_type }}</td>
+          <td style="color:var(--gold);font-weight:700;">₹{{ "{:,.0f}".format(v.price) }}</td>
+          <td><span class="badge b-{{ v.status }}">{{ v.status }}</span></td>
+          <td><a href="{{ url_for('staff_edit_vehicle', id=v.vehicle_id) }}" class="btn btn-ghost btn-sm">Edit</a></td>
+        </tr>
+        {% else %}
+        <tr><td colspan="8" style="text-align:center;color:var(--t3);padding:32px;">No vehicles found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

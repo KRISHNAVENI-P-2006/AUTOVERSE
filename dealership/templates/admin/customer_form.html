@@ -1,0 +1,12 @@
+{% extends 'admin/base.html' %}
+{% block page_title %}{{ action }} Customer{% endblock %}
+{% block content %}
+<div style="max-width:550px;"><div class="card"><div class="card-hdr"><span class="card-title">Customer Details</span><a href="{{ url_for('admin_customers') }}" class="btn btn-ghost btn-sm">← Back</a></div>
+<div class="card-body"><form method="POST"><div class="fg">
+<div class="fgrp fg-full"><label>Full Name</label><input name="name" value="{{ customer.name if customer else '' }}" required></div>
+<div class="fgrp"><label>Phone</label><input name="phone" value="{{ customer.phone if customer else '' }}"></div>
+<div class="fgrp"><label>Email</label><input name="email" type="email" value="{{ customer.email if customer else '' }}"></div>
+<div class="fgrp fg-full"><label>Address</label><input name="address" value="{{ customer.address if customer else '' }}"></div>
+</div><div style="margin-top:16px;display:flex;gap:8px;"><button class="btn btn-primary">{{ action }}</button><a href="{{ url_for('admin_customers') }}" class="btn btn-ghost">Cancel</a></div>
+</form></div></div></div>
+{% endblock %}

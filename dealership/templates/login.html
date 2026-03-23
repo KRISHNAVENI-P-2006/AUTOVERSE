@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Autoverse by Safari Motors — Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Poppins',sans-serif;min-height:100vh;display:flex;background:#0f0f0f;color:#fff;overflow:hidden}
+    .left{flex:1;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
+    .left-bg{position:absolute;inset:0;background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%)}
+    .left-overlay{position:absolute;inset:0;background:url('https://imgd.aeplcdn.com/664x374/n/cw/ec/106815/creta-exterior-right-front-three-quarter-2.jpeg?isig=0&q=80') center/cover no-repeat;opacity:0.22}
+    .left-content{position:relative;z-index:2;text-align:center;padding:40px}
+    .brand-big{font-family:'Space Grotesk',sans-serif;font-size:52px;font-weight:800;letter-spacing:-1px;line-height:1.1}
+    .brand-big span{color:#f97316}
+    .brand-by{font-size:14px;color:rgba(255,255,255,0.5);letter-spacing:3px;margin-top:6px;text-transform:uppercase}
+    .brand-tagline{font-size:14px;color:rgba(255,255,255,0.5);margin-top:14px;letter-spacing:1px}
+    .car-count{margin-top:40px;display:flex;gap:36px;justify-content:center}
+    .car-count-item{text-align:center}
+    .car-count-num{font-family:'Space Grotesk',sans-serif;font-size:30px;font-weight:700;color:#f97316}
+    .car-count-lbl{font-size:11px;color:rgba(255,255,255,0.45);letter-spacing:2px;text-transform:uppercase;margin-top:2px}
+    .right{width:420px;background:#111;display:flex;align-items:center;justify-content:center;padding:40px 36px;flex-shrink:0}
+    .form-box{width:100%}
+    .form-title{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:700;margin-bottom:5px}
+    .form-sub{color:#555;font-size:13px;margin-bottom:30px}
+    .form-group{margin-bottom:17px}
+    label{display:block;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#555;margin-bottom:7px;font-weight:500}
+    input{width:100%;padding:12px 16px;background:#1a1a1a;border:1.5px solid #2a2a2a;border-radius:10px;color:#fff;font-size:14px;font-family:'Poppins',sans-serif;outline:none;transition:border-color .2s}
+    input:focus{border-color:#f97316}
+    input::placeholder{color:#444}
+    .btn-login{width:100%;padding:13px;background:#f97316;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;font-family:'Poppins',sans-serif;cursor:pointer;transition:background .15s;margin-top:6px}
+    .btn-login:hover{background:#ea6c0a}
+    .form-links{display:flex;justify-content:space-between;margin-top:18px;font-size:13px}
+    .form-links a{color:#f97316;text-decoration:none}
+    .form-links a:hover{text-decoration:underline}
+    .alert{padding:11px 16px;border-radius:8px;font-size:13px;margin-bottom:18px;border:1px solid}
+    .alert-danger{background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.3);color:#f87171}
+    .alert-success{background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.3);color:#4ade80}
+    .alert-warning{background:rgba(234,179,8,.1);border-color:rgba(234,179,8,.3);color:#facc15}
+    .alert-info{background:rgba(59,130,246,.1);border-color:rgba(59,130,246,.3);color:#60a5fa}
+    @media(max-width:768px){.left{display:none}.right{width:100%;min-height:100vh}}
+  </style>
+</head>
+<body>
+  <div class="left">
+    <div class="left-bg"></div>
+    <div class="left-overlay"></div>
+    <div class="left-content">
+      <div class="brand-big"><span>AUTO</span>VERSE</div>
+      <div class="brand-by">by Safari Motors</div>
+      <div class="brand-tagline">India's Trusted Car Dealership Network</div>
+      <div class="car-count">
+        <div class="car-count-item"><div class="car-count-num">14+</div><div class="car-count-lbl">Models</div></div>
+        <div class="car-count-item"><div class="car-count-num">5</div><div class="car-count-lbl">Showrooms</div></div>
+        <div class="car-count-item"><div class="car-count-num">8</div><div class="car-count-lbl">Brands</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="right">
+    <div class="form-box">
+      <div class="form-title">Welcome Back 👋</div>
+      <div class="form-sub">Sign in to your account</div>
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}{% for cat,msg in messages %}
+          <div class="alert alert-{{ cat }}">{{ msg }}</div>
+        {% endfor %}{% endif %}
+      {% endwith %}
+      <form method="POST">
+        <div class="form-group">
+          <label>Username</label>
+          <input type="text" name="username" placeholder="Enter your username" required autofocus>
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" name="password" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn-login">Sign In →</button>
+      </form>
+      <div class="form-links">
+        <a href="{{ url_for('forgot_password') }}">Forgot password?</a>
+        <a href="{{ url_for('register') }}">New customer? Register →</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

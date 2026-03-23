@@ -1,0 +1,23 @@
+{% extends 'admin/base.html' %}
+{% block page_title %}Inquiry #{{ inquiry.inquiry_id }}{% endblock %}
+{% block content %}
+<div style="max-width:700px;">
+<div class="card" style="margin-bottom:16px;"><div class="card-hdr"><span class="card-title">Inquiry Details</span><a href="{{ url_for('admin_inquiries') }}" class="btn btn-ghost btn-sm">← Back</a></div>
+<div class="card-body">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px;margin-bottom:16px;">
+<div><span class="text-muted">Customer:</span> <strong>{{inquiry.customer_name}}</strong></div>
+<div><span class="text-muted">Vehicle:</span> <strong>{{inquiry.vehicle}}</strong></div>
+<div><span class="text-muted">Branch:</span> <span class="badge b-responded">{{inquiry.branch}}</span></div>
+<div><span class="text-muted">Status:</span> <span class="badge b-{{inquiry.status}}">{{inquiry.status}}</span></div>
+</div>
+{% if inquiry.message %}<div style="padding:12px;background:var(--bg3);border-radius:7px;border:1px solid var(--border);"><div style="font-size:9px;letter-spacing:2px;color:var(--t3);margin-bottom:6px;font-family:'IBM Plex Mono',monospace;">CUSTOMER MESSAGE</div><p style="font-size:13px;color:var(--t2);line-height:1.6;">{{inquiry.message}}</p></div>{% endif %}
+{% if inquiry.response %}<div style="padding:12px;background:rgba(99,102,241,0.07);border-radius:7px;border:1px solid rgba(99,102,241,0.2);margin-top:10px;"><div style="font-size:9px;letter-spacing:2px;color:var(--a2);margin-bottom:6px;font-family:'IBM Plex Mono',monospace;">PREVIOUS RESPONSE</div><p style="font-size:13px;color:var(--t2);line-height:1.6;">{{inquiry.response}}</p></div>{% endif %}
+</div></div>
+<div class="card"><div class="card-hdr"><span class="card-title">Update Inquiry</span></div>
+<div class="card-body"><form method="POST"><div class="fg">
+<div class="fgrp"><label>Assign Staff (Branch: {{inquiry.branch}})</label><select name="staff_id"><option value="">Unassigned</option>{% for s in staff_list %}<option value="{{ s.staff_id }}" {% if inquiry.staff_id==s.staff_id %}selected{% endif %}>{{ s.name }}</option>{% endfor %}</select></div>
+<div class="fgrp"><label>Status</label><select name="status">{% for s in ['pending','responded','closed'] %}<option value="{{ s }}" {% if inquiry.status==s %}selected{% endif %}>{{ s }}</option>{% endfor %}</select></div>
+<div class="fgrp fg-full"><label>Response</label><textarea name="response" rows="5" placeholder="Your response...">{{inquiry.response or ''}}</textarea></div>
+</div><div style="margin-top:14px;display:flex;gap:8px;"><button class="btn btn-primary">Update</button><a href="{{ url_for('admin_inquiries') }}" class="btn btn-ghost">Cancel</a></div>
+</form></div></div></div>
+{% endblock %}

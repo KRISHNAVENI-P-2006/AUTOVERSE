@@ -1,0 +1,16 @@
+{% extends 'admin/base.html' %}
+{% block page_title %}Record Sale{% endblock %}
+{% block content %}
+<div style="max-width:700px;"><div class="card"><div class="card-hdr"><span class="card-title">Sale Details</span><a href="{{ url_for('admin_sales') }}" class="btn btn-ghost btn-sm">← Back</a></div>
+<div class="card-body"><form method="POST"><div class="fg">
+<div class="fgrp fg-full"><label>Vehicle (Available Only)</label>
+<select name="vehicle_id" id="vs" required onchange="document.getElementById('sp').value=this.options[this.selectedIndex].dataset.price">
+<option value="">Select vehicle</option>{% for v in vehicles %}<option value="{{ v.vehicle_id }}" data-price="{{ v.price }}">{{ v.mfr }} {{ v.model }} {{ v.year }} — {{ fmt_inr(v.price) }}</option>{% endfor %}</select></div>
+<div class="fgrp"><label>Customer</label><select name="customer_id" required><option value="">Select customer</option>{% for c in customers %}<option value="{{ c.customer_id }}">{{ c.name }}</option>{% endfor %}</select></div>
+<div class="fgrp"><label>Staff</label><select name="staff_id" required><option value="">Select staff</option>{% for s in staff_list %}<option value="{{ s.staff_id }}">{{ s.name }} ({{ s.branch }})</option>{% endfor %}</select></div>
+<div class="fgrp"><label>Sale Price (₹)</label><input id="sp" name="sale_price" type="number" step="1000" required placeholder="Auto-fills from vehicle"></div>
+<div class="fgrp"><label>Sale Date</label><input name="sale_date" type="date" value="{{ today }}" required></div>
+<div class="fgrp fg-full"><label>Notes</label><textarea name="notes" placeholder="Any notes..."></textarea></div>
+</div><div style="margin-top:16px;display:flex;gap:8px;"><button class="btn btn-gold">💰 Record Sale</button><a href="{{ url_for('admin_sales') }}" class="btn btn-ghost">Cancel</a></div>
+</form></div></div></div>
+{% endblock %}

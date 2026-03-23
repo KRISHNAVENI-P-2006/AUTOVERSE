@@ -1,0 +1,132 @@
+{% extends 'customer/base.html' %}
+{% block title %}Browse Cars — AutoElite{% endblock %}
+{% block page_title %}Browse Cars{% endblock %}
+
+{% block content %}
+<!-- Filters -->
+<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 20px;margin-bottom:22px;">
+  <form method="GET" style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;">
+    <div style="flex:1;min-width:180px;">
+      <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--t3);margin-bottom:5px;">Search</div>
+      <input type="text" name="search" value="{{ search }}" placeholder="Model, brand..." style="width:100%;">
+    </div>
+    <div>
+      <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--t3);margin-bottom:5px;">Brand</div>
+      <select name="mfr" onchange="this.form.submit()">
+        <option value="">All Brands</option>
+        {% for m in manufacturers %}
+        <option value="{{ m.manufacturer_id }}" {% if mfr_filter==m.manufacturer_id|string %}selected{% endif %}>{{ m.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div>
+      <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--t3);margin-bottom:5px;">Fuel</div>
+      <select name="fuel" onchange="this.form.submit()">
+        <option value="">All Fuel</option>
+        {% for f in ['Petrol','Diesel','Electric','Hybrid','CNG'] %}
+        <option value="{{ f }}" {% if fuel_filter==f %}selected{% endif %}>{{ f }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div>
+      <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--t3);margin-bottom:5px;">Sort By</div>
+      <select name="sort" onchange="this.form.submit()">
+        <option value="price_asc" {% if sort_filter=='price_asc' %}selected{% endif %}>Price: Low → High</option>
+        <option value="price_desc" {% if sort_filter=='price_desc' %}selected{% endif %}>Price: High → Low</option>
+        <option value="newest" {% if sort_filter=='newest' %}selected{% endif %}>Newest First</option>
+      </select>
+    </div>
+    <button type="submit" class="btn btn-primary btn-sm">Search</button>
+    {% if search or fuel_filter or mfr_filter %}
+    <a href="{{ url_for('customer_browse') }}" class="btn btn-ghost btn-sm">Clear</a>
+    {% endif %}
+  </form>
+</div>
+
+<div style="font-size:13px;color:var(--t3);margin-bottom:16px;">{{ vehicles|length }} cars available</div>
+
+<!-- Vehicle Cards Grid -->
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:20px;">
+  {% for v in vehicles %}
+  <div class="vcard" style="background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:all 0.2s;position:relative;">
+    <!-- Wishlist heart -->
+    <button onclick="toggleWishlist({{ v.vehicle_id }}, this)"
+      data-in="{{ '1' if v.vehicle_id in wishlist_ids else '0' }}"
+      style="position:absolute;top:10px;right:10px;z-index:2;width:34px;height:34px;border-radius:50%;
+             background:rgba(255,255,255,0.9);border:none;cursor:pointer;font-size:17px;
+             display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.15);
+             transition:transform 0.15s;" title="Wishlist">
+      {{ '❤️' if v.vehicle_id in wishlist_ids else '🤍' }}
+    </button>
+
+    <!-- Image -->
+    <a href="{{ url_for('customer_vehicle_detail', id=v.vehicle_id) }}" style="display:block;">
+      <div style="position:relative;overflow:hidden;height:170px;">
+        <img src="{{ v.image_url or 'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=600&q=80' }}"
+             alt="{{ v.manufacturer_name }} {{ v.model }}"
+             style="width:100%;height:100%;object-fit:cover;transition:transform 0.3s;"
+             onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+        <div style="position:absolute;bottom:8px;left:8px;">
+          <span style="background:rgba(26,35,50,0.8);color:#fff;font-size:10px;letter-spacing:1px;
+                       text-transform:uppercase;padding:3px 8px;border-radius:4px;">{{ v.fuel_type }}</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- Info -->
+    <div style="padding:16px;">
+      <div style="font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">{{ v.manufacturer_name }}</div>
+      <div style="font-family:'Fraunces',serif;font-size:19px;font-weight:600;color:var(--text);">{{ v.model }}</div>
+      <div style="font-size:12px;color:var(--t3);margin:4px 0 10px;">{{ v.year }} · {{ v.transmission }} · {{ "{:,}".format(v.mileage or 0) }} km</div>
+
+      <!-- Color dots -->
+      {% if v.available_colors %}
+      <div style="display:flex;gap:4px;margin-bottom:12px;align-items:center;">
+        <span style="font-size:10px;color:var(--t3);margin-right:2px;">Colours:</span>
+        {% for col in v.available_colors.split(',')[:5] %}
+        {% set cmap = {'Pearl White':'#f0ede8','Pearl Arctic White':'#f5f5f5','White':'#f5f5f5','Grandeur Grey':'#8a8a90','Abyss Black':'#1a1a1a','Black':'#222','Sizzling Red':'#c0392b','Red':'#c0392b','Fiery Red':'#d44c1e','Atlas White':'#e8e8e8','Typhoon Silver':'#b0b0b0','Silver':'#b0b0b0','Ranger Khaki':'#7a6a50','Brave Khaki':'#8a7a5a','Midnight Black Blue':'#1a1a2e','Midnight Black':'#111','Coral Red':'#e05040','Starry Night Blue':'#1a2a4a','Blue':'#2a5fc4','Grey':'#7a7a7a'} %}
+        <span title="{{ col.strip() }}" style="width:14px;height:14px;border-radius:50%;
+              background:{{ cmap.get(col.strip(), '#aaa') }};border:1.5px solid var(--border2);
+              display:inline-block;cursor:default;"></span>
+        {% endfor %}
+        {% if v.available_colors.split(',')|length > 5 %}
+        <span style="font-size:10px;color:var(--t3);">+{{ v.available_colors.split(',')|length - 5 }}</span>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <div style="font-size:10px;color:var(--t3);">Starting at</div>
+          <div style="font-family:'Fraunces',serif;font-size:22px;font-weight:700;color:var(--accent);">₹{{ "{:,.0f}".format(v.price) }}</div>
+          <div style="font-size:10px;color:var(--t3);">EMI from ₹{{ "{:,.0f}".format((v.price * 0.9 * (8.5/100/12) * (1+8.5/100/12)**60 / ((1+8.5/100/12)**60 - 1)) | int) }}/mo</div>
+        </div>
+        <a href="{{ url_for('customer_vehicle_detail', id=v.vehicle_id) }}" class="btn btn-primary btn-sm">View →</a>
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--t3);">
+    <div style="font-size:40px;margin-bottom:12px;">🚗</div>
+    <div>No cars match your search. <a href="{{ url_for('customer_browse') }}" style="color:var(--accent);">Clear filters</a></div>
+  </div>
+  {% endfor %}
+</div>
+
+<script>
+async function toggleWishlist(vid, btn) {
+  btn.style.transform = 'scale(0.8)';
+  try {
+    const resp = await fetch(`/customer/wishlist/toggle/${vid}`, {
+      method: 'POST',
+      headers: {'X-Requested-With': 'XMLHttpRequest',
+                'Content-Type': 'application/json'}
+    });
+    const data = await resp.json();
+    btn.dataset.in = data.status === 'added' ? '1' : '0';
+    btn.textContent = data.status === 'added' ? '❤️' : '🤍';
+  } catch(e) { window.location = `/customer/wishlist/toggle/${vid}`; }
+  setTimeout(() => btn.style.transform = 'scale(1)', 150);
+}
+</script>
+{% endblock %}

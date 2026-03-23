@@ -1,0 +1,42 @@
+{% extends 'admin/base.html' %}
+{% block title %}Admin Dashboard — AutoElite{% endblock %}
+{% block page_title %}Admin Dashboard{% endblock %}
+{% block content %}
+<div class="stats">
+  <div class="stat indigo"><div class="stat-lbl">Total Revenue</div><div class="stat-val">{{ fmt_inr(stats.revenue) }}</div><div class="stat-ic">💵</div></div>
+  <div class="stat gold"><div class="stat-lbl">Total Sales</div><div class="stat-val">{{ stats.sales }}</div><div class="stat-ic">💰</div></div>
+  <div class="stat green"><div class="stat-lbl">Available Vehicles</div><div class="stat-val">{{ stats.available }}</div><div class="stat-ic">🚗</div></div>
+  <div class="stat red"><div class="stat-lbl">Pending Inquiries</div><div class="stat-val">{{ stats.pending_inq }}</div><div class="stat-ic">💬</div></div>
+  <div class="stat blue"><div class="stat-lbl">Customers</div><div class="stat-val">{{ stats.customers }}</div><div class="stat-ic">👥</div></div>
+  <div class="stat indigo"><div class="stat-lbl">Staff Members</div><div class="stat-val">{{ stats.staff }}</div><div class="stat-ic">🧑‍💼</div></div>
+</div>
+<div class="grid2" style="margin-bottom:18px;">
+  <div class="card">
+    <div class="card-hdr"><span class="card-title">Monthly Revenue</span></div>
+    <div class="card-body"><canvas id="revChart" height="180"></canvas></div>
+  </div>
+  <div class="card">
+    <div class="card-hdr"><span class="card-title">Revenue by Branch</span></div>
+    <div class="card-body"><canvas id="branchChart" height="180"></canvas></div>
+  </div>
+</div>
+<div class="card">
+  <div class="card-hdr"><span class="card-title">Recent Sales</span><a href="{{ url_for('admin_sales') }}" class="btn btn-ghost btn-sm">View All</a></div>
+  <div class="tw">
+    <table><thead><tr><th>#</th><th>Vehicle</th><th>Customer</th><th>Staff</th><th>Branch</th><th>Amount</th><th>Date</th></tr></thead>
+    <tbody>
+    {% for s in recent_sales %}
+    <tr><td class="mono text-muted">#{{s.sale_id}}</td><td class="td-main">{{s.vehicle}}</td><td>{{s.customer}}</td><td>{{s.staff}}</td><td>{{s.branch}}</td><td class="text-gold fw6">{{ fmt_inr(s.sale_price) }}</td><td class="mono text-muted" style="font-size:11px;">{{s.sale_date}}</td></tr>
+    {% else %}<tr><td colspan="7" style="text-align:center;color:var(--t3);padding:28px;">No sales yet.</td></tr>{% endfor %}
+    </tbody></table>
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script>
+const md=JSON.parse('{{ monthly|tojson|safe }}');
+const bd=JSON.parse('{{ branch_revenue|tojson|safe }}');
+const gc='#272840',tc='#8b8fa8',tf={family:'IBM Plex Mono',size:9};
+new Chart(document.getElementById('revChart'),{type:'line',data:{labels:md.map(d=>d.month).reverse(),datasets:[{data:md.map(d=>d.revenue||0).reverse(),borderColor:'#6366f1',backgroundColor:'rgba(99,102,241,0.1)',fill:true,tension:0.4,pointBackgroundColor:'#6366f1',pointRadius:4}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{grid:{color:gc},ticks:{color:tc,font:tf}},y:{grid:{color:gc},ticks:{color:tc,font:tf}}}}});
+new Chart(document.getElementById('branchChart'),{type:'bar',data:{labels:bd.map(d=>d.branch),datasets:[{data:bd.map(d=>d.revenue||0),backgroundColor:'rgba(245,158,11,0.7)',borderColor:'#f59e0b',borderWidth:1,borderRadius:4}]},options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false}},scales:{x:{grid:{color:gc},ticks:{color:tc,font:tf}},y:{grid:{color:gc},ticks:{color:tc,font:tf}}}}});
+</script>
+{% endblock %}

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>{% block title %}Autoverse{% endblock %}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#faf9f7;--bg2:#f4f1eb;--surface:#fff;--border:#e8e0d0;--border2:#d4c9b0;--accent:#c84b1f;--a2:#e06030;--navy:#1a2332;--gold:#b8960c;--green:#1a6b4a;--text:#1a1410;--t2:#5a4a3a;--t3:#8a7a6a;--sw:240px;}
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;}
+    .sidebar{width:var(--sw);background:var(--navy);border-right:1px solid #2a3545;display:flex;flex-direction:column;position:fixed;height:100vh;z-index:100;}
+    .sb-top{padding:24px 18px 18px;border-bottom:1px solid #2a3545;}
+    .brand{font-family:'Fraunces',serif;font-size:22px;font-weight:600;color:#fff;letter-spacing:0.5px;}
+    .brand em{color:#f59e4a;font-style:normal;}
+    .brand-sub{font-size:10px;color:#6b7d90;margin-top:4px;letter-spacing:1px;text-transform:uppercase;}
+    .nav{padding:16px 12px;flex:1;overflow-y:auto;}
+    .nav-lbl{font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:#4a5a6a;padding:0 8px;margin-bottom:5px;display:block;margin-top:16px;}
+    .nav-a{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;color:#9aabb8;text-decoration:none;font-size:13px;font-weight:500;transition:all 0.15s;margin-bottom:2px;}
+    .nav-a:hover{background:#243040;color:#fff;}
+    .nav-a.active{background:var(--accent);color:#fff;}
+    .sb-foot{padding:14px;border-top:1px solid #2a3545;}
+    .ucard{display:flex;align-items:center;gap:9px;padding:10px 12px;background:#243040;border-radius:10px;}
+    .uav{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#c84b1f,#e07040);display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:14px;font-weight:600;color:#fff;flex-shrink:0;}
+    .uname{font-size:12.5px;font-weight:600;color:#e0e8f0;}.urole{font-size:9px;color:#6b7d90;letter-spacing:1px;text-transform:uppercase;}
+    .logout{margin-left:auto;color:#4a5a6a;text-decoration:none;font-size:16px;transition:color 0.15s;}.logout:hover{color:#fb7185;}
+    .main{margin-left:var(--sw);flex:1;display:flex;flex-direction:column;}
+    .topbar{height:58px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 26px;gap:14px;position:sticky;top:0;z-index:50;box-shadow:0 1px 8px rgba(0,0,0,0.06);}
+    .tb-title{font-family:'Fraunces',serif;font-size:19px;font-weight:600;flex:1;color:var(--text);}
+    .content{padding:26px;flex:1;}
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,0.04);}
+    .card-hdr{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+    .card-title{font-family:'Fraunces',serif;font-size:15px;font-weight:600;}
+    .card-body{padding:20px;}
+    .badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:600;text-transform:capitalize;}
+    .b-available{background:rgba(26,107,74,0.1);color:var(--green);border:1px solid rgba(26,107,74,0.25);}
+    .b-sold{background:rgba(200,75,31,0.1);color:var(--accent);border:1px solid rgba(200,75,31,0.25);}
+    .b-reserved,.b-pending{background:rgba(184,150,12,0.1);color:var(--gold);border:1px solid rgba(184,150,12,0.25);}
+    .b-responded{background:rgba(26,35,50,0.08);color:var(--navy);border:1px solid rgba(26,35,50,0.2);}
+    .b-closed{background:rgba(138,122,106,0.1);color:var(--t3);border:1px solid var(--border);}
+    .btn{display:inline-flex;align-items:center;gap:5px;padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;transition:all 0.15s;text-decoration:none;white-space:nowrap;}
+    .btn-primary{background:var(--accent);color:#fff;}.btn-primary:hover{background:#b03a10;}
+    .btn-ghost{background:transparent;color:var(--t2);border:1px solid var(--border);}.btn-ghost:hover{background:var(--bg2);}
+    .btn-navy{background:var(--navy);color:#fff;}.btn-navy:hover{background:#243040;}
+    .btn-sm{padding:5px 11px;font-size:12px;}
+    .fg{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;}
+    .fg-full{grid-column:1/-1;}.fgrp{display:flex;flex-direction:column;gap:5px;}
+    label{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);font-weight:600;}
+    input,select,textarea{background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:10px 13px;font-size:13.5px;font-family:'DM Sans',sans-serif;transition:border-color 0.2s;outline:none;width:100%;}
+    input:focus,select:focus,textarea:focus{border-color:var(--accent);background:var(--surface);}
+    textarea{resize:vertical;min-height:80px;}
+    .sbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;}
+    .alert{padding:11px 16px;border-radius:9px;font-size:13px;margin-bottom:15px;border:1px solid;}
+    .alert-success{background:rgba(26,107,74,0.08);border-color:rgba(26,107,74,0.25);color:var(--green);}
+    .alert-danger{background:rgba(200,75,31,0.08);border-color:rgba(200,75,31,0.25);color:var(--accent);}
+    .alert-warning{background:rgba(184,150,12,0.08);border-color:rgba(184,150,12,0.25);color:var(--gold);}
+    .alert-info{background:rgba(26,35,50,0.06);border-color:rgba(26,35,50,0.15);color:var(--navy);}
+    .text-muted{color:var(--t3);}.text-green{color:var(--green);}.text-gold{color:var(--gold);}.text-accent{color:var(--accent);}
+    .fw6{font-weight:600;}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+    .notif-badge{background:#e8423a;color:#fff;border-radius:10px;padding:1px 6px;font-size:10px;font-weight:700;margin-left:auto;}
+  </style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sb-top">
+    <div class="brand"><span style="font-size:0.9em;font-weight:800;">AUTOVERSE</span><span style="display:block;font-size:0.38em;letter-spacing:2px;font-weight:400;opacity:0.7;margin-top:-2px;">by Safari Motors</span></div>
+    <div class="brand-sub">Customer Portal</div>
+  </div>
+  <nav class="nav">
+    <span class="nav-lbl">Home</span>
+    <a href="{{ url_for('customer_dashboard') }}" class="nav-a {% if request.endpoint=='customer_dashboard' %}active{% endif %}">🏠 My Dashboard</a>
+    <span class="nav-lbl">Browse</span>
+    <a href="{{ url_for('customer_browse') }}" class="nav-a {% if request.endpoint=='customer_browse' %}active{% endif %}">🚗 Browse Cars</a>
+    <a href="{{ url_for('customer_wishlist') }}" class="nav-a {% if request.endpoint=='customer_wishlist' %}active{% endif %}">❤️ My Wishlist</a>
+    <a href="{{ url_for('customer_test_drive') }}" class="nav-a {% if 'test_drive' in request.endpoint %}active{% endif %}">🔑 Book Test Drive</a>
+    <span class="nav-lbl">My Activity</span>
+    <a href="{{ url_for('customer_inquiries') }}" class="nav-a {% if 'inquir' in request.endpoint and 'customer' in request.endpoint %}active{% endif %}">
+      💬 My Inquiries <span class="notif-badge" id="inq-badge" style="display:none"></span>
+    </a>
+    <a href="{{ url_for('customer_purchases') }}" class="nav-a {% if request.endpoint=='customer_purchases' %}active{% endif %}">📋 My Purchases</a>
+    <span class="nav-lbl">Account</span>
+    <a href="{{ url_for('customer_profile') }}" class="nav-a {% if request.endpoint=='customer_profile' %}active{% endif %}">👤 My Profile</a>
+  </nav>
+  <div class="sb-foot">
+    <div class="ucard">
+      <div class="uav">{{ session.username[0].upper() }}</div>
+      <div><div class="uname">{{ session.username }}</div><div class="urole">Customer</div></div>
+      <a href="{{ url_for('logout') }}" class="logout" title="Logout">⎋</a>
+    </div>
+  </div>
+</aside>
+<div class="main">
+  <div class="topbar">
+    <div class="tb-title">{% block page_title %}Dashboard{% endblock %}</div>
+    <div style="display:flex;gap:8px;align-items:center;">{% block topbar_actions %}{% endblock %}</div>
+  </div>
+  <div class="content">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}{% for cat,msg in messages %}<div class="alert alert-{{ cat }}">{{ msg }}</div>{% endfor %}{% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </div>
+</div>
+<script>setTimeout(()=>{document.querySelectorAll('.alert').forEach(a=>{a.style.transition='opacity 0.5s';a.style.opacity='0';setTimeout(()=>a.remove(),500);});},3500);
+function pollNotifications(){
+  fetch('/api/notifications').then(r=>r.json()).then(d=>{
+    const b=document.getElementById('inq-badge');
+    if(b){if(d.inquiry_unread>0){b.textContent=d.inquiry_unread;b.style.display='inline';}else{b.style.display='none';}}
+  }).catch(()=>{});
+}
+pollNotifications(); setInterval(pollNotifications, 15000);
+</script>
+</body></html>

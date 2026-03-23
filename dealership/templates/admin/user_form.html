@@ -1,0 +1,11 @@
+{% extends 'admin/base.html' %}
+{% block page_title %}Add User{% endblock %}
+{% block content %}
+<div style="max-width:450px;"><div class="card"><div class="card-hdr"><span class="card-title">User Credentials</span><a href="{{ url_for('admin_users') }}" class="btn btn-ghost btn-sm">← Back</a></div>
+<div class="card-body"><form method="POST"><div class="fg">
+<div class="fgrp fg-full"><label>Username</label><input name="username" required></div>
+<div class="fgrp fg-full"><label>Password</label><input name="password" type="password" required minlength="6"></div>
+<div class="fgrp fg-full"><label>Role</label><select name="role"><option value="customer">Customer</option><option value="staff">Staff</option><option value="admin">Admin</option></select></div>
+</div><div style="margin-top:14px;display:flex;gap:8px;"><button class="btn btn-primary">Create User</button><a href="{{ url_for('admin_users') }}" class="btn btn-ghost">Cancel</a></div>
+</form></div></div></div>
+{% endblock %}

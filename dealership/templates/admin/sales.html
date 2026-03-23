@@ -1,0 +1,13 @@
+{% extends 'admin/base.html' %}
+{% block page_title %}Sales{% endblock %}
+{% block topbar_actions %}<a href="{{ url_for('admin_add_sale') }}" class="btn btn-gold btn-sm">+ Record Sale</a>{% endblock %}
+{% block content %}
+<div class="card"><div class="card-hdr"><span class="card-title">{{ sales|length }} Sales</span>{% if sales %}<span class="text-gold fw6">Total: {{ fmt_inr(sales|sum(attribute='sale_price')) }}</span>{% endif %}</div>
+<div class="tw"><table><thead><tr><th>ID</th><th>Vehicle</th><th>Customer</th><th>Staff</th><th>Branch</th><th>Sale Price</th><th>Date</th><th>Del</th></tr></thead><tbody>
+{% for s in sales %}
+<tr><td class="mono text-muted">#{{s.sale_id}}</td><td class="td-main">{{s.vehicle}} ({{s.year}})</td><td>{{s.customer_name}}</td><td>{{s.staff_name}}</td><td>{{s.branch}}</td>
+<td class="text-gold fw6">{{ fmt_inr(s.sale_price) }}</td><td class="mono" style="font-size:11px;">{{s.sale_date}}</td>
+<td><form method="POST" action="{{ url_for('admin_delete_sale',id=s.sale_id) }}" onsubmit="return confirm('Delete sale?')"><button class="btn btn-danger btn-sm">Del</button></form></td></tr>
+{% else %}<tr><td colspan="8" style="text-align:center;color:var(--t3);padding:28px;">No sales yet.</td></tr>{% endfor %}
+</tbody></table></div></div>
+{% endblock %}
