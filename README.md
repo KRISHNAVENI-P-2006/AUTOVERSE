@@ -22,7 +22,7 @@ __Tech Stack__
 LayerTechnologyBackendPython 3, FlaskDatabaseSQLite (via Python sqlite3)ORMRaw SQL with sqlite3.RowFrontendHTML, CSS, JavaScriptAuthWerkzeug password hashing, Flask sessionsChartsChart.js 4.4 (CDN)FontsGoogle Fonts (Fraunces, Plus Jakarta Sans, Syne, Poppins)
 
 __Features__
-##Admin Portal
+Admin Portal
 
 - Full CRUD for vehicles, manufacturers, customers, staff, and sales
 - Revenue reports with charts — by month, showroom, manufacturer, fuel type
@@ -31,7 +31,7 @@ __Features__
 - Test drive bookings overview across all showrooms
 - User account management — create, assign roles, delete
 
-##Staff Portal
+Staff Portal
 
 - Branch-restricted access — only sees own showroom's data
 - Chat-based inquiry management with real-time unread badge
