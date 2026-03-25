@@ -1,8 +1,10 @@
-**Autoverse by Safari Motors**
+# Autoverse by Safari Motors
+
 A full-stack Car Dealership Management System built with Flask (Python) and SQLite.
 
-**Table of Contents**
+---
 
+## Table of Contents
 - Project Overview
 - Tech Stack
 - Features
@@ -14,69 +16,93 @@ A full-stack Car Dealership Management System built with Flask (Python) and SQLi
 - URL Reference
 - Running the App
 
+---
 
-__Project Overview__
-Autoverse is a web-based dealership management system that serves three types of users — Admin, Staff, and Customer — each with a completely separate interface, color theme, and set of features. All three portals are accessed through a single login page that automatically routes each user to the correct dashboard based on their role.
+## Project Overview
+Autoverse is a web-based dealership management system that serves three types of users — Admin, Staff, and Customer — each with a completely separate interface, color theme, and feature set.
 
-__Tech Stack__
-LayerTechnologyBackendPython 3, FlaskDatabaseSQLite (via Python sqlite3)ORMRaw SQL with sqlite3.RowFrontendHTML, CSS, JavaScriptAuthWerkzeug password hashing, Flask sessionsChartsChart.js 4.4 (CDN)FontsGoogle Fonts (Fraunces, Plus Jakarta Sans, Syne, Poppins)
+All three portals are accessed through a single login page, which automatically routes users to the correct dashboard based on their role.
 
-__Features__
-Admin Portal
+---
 
-- Full CRUD for vehicles, manufacturers, customers, staff, and sales
-- Revenue reports with charts — by month, showroom, manufacturer, fuel type
-- Staff performance table — sales count and total revenue per person
-- Inquiry management across all branches with chat interface
-- Test drive bookings overview across all showrooms
-- User account management — create, assign roles, delete
+## Tech Stack
 
-Staff Portal
+Backend: Python 3, Flask  
+Database: SQLite (via sqlite3)  
+ORM: Raw SQL with sqlite3.Row  
+Frontend: HTML, CSS, JavaScript  
+Authentication: Werkzeug password hashing, Flask sessions  
+Charts: Chart.js (CDN)  
+Fonts: Google Fonts (Fraunces, Plus Jakarta Sans, Syne, Poppins)
 
-- Branch-restricted access — only sees own showroom's data
-- Chat-based inquiry management with real-time unread badge
-- Test drive booking management — confirm, complete, cancel
-- Record new sales with auto vehicle status update
-- Add and edit vehicles in inventory
-- Read-only customer list
+---
 
-## Customer Portal
+## Features
 
-Browse cars in a card grid with real images, colour swatches, and EMI calculator
-Vehicle detail page with full specs, all available colours, and 6 EMI plan options
-Wishlist to save favourite vehicles
-Send inquiries to a specific showroom and chat with staff
-Book test drives with live slot availability per branch
-View purchase history
-Update profile and change password
+### Admin Portal
+- Full CRUD for vehicles, manufacturers, customers, staff, and sales  
+- Revenue reports with charts by month, showroom, manufacturer, and fuel type  
+- Staff performance tracking with sales count and total revenue  
+- Inquiry management with chat interface  
+- Test drive booking overview across all showrooms  
+- User account management including creation, role assignment, and deletion  
 
-System-wide
+---
 
-Role-based authentication with @login_required and @role_required decorators
-Live notification badges polling every 15 seconds — unread inquiries and pending test drives
-Branch-based data isolation — enforced at SQL query level
-Password hashing with Werkzeug bcrypt
-Session management with Flask sessions
-Forgot password with 2-step username verification
-Fully responsive layout
+### Staff Portal
+- Branch-restricted access to showroom data  
+- Chat-based inquiry management with unread notification badge  
+- Test drive booking management including confirm, complete, and cancel  
+- Record new sales with automatic vehicle status update  
+- Add and edit vehicles in inventory  
+- Read-only access to customer list  
 
+---
 
-Database Schema
-The app uses 10 tables with full foreign key relationships.
-Users           — login credentials and role for all users
-Manufacturer    — car brands
-Vehicle         — car inventory linked to manufacturer
-Customer        — customer profiles linked to Users
-Sales_Staff     — staff profiles linked to Users
-Sales           — completed sales (vehicle + customer + staff)
-Inquiry         — chat threads between customer and a branch
-InquiryMessage  — individual messages inside an inquiry thread
-Wishlist        — vehicles saved by a customer
-TestDrive       — test drive slot bookings
-Key relationships:
+### Customer Portal
+- Browse cars in a card grid with images, colour options, and EMI calculator  
+- Vehicle detail page with specifications and EMI plans  
+- Wishlist to save favourite vehicles  
+- Send inquiries and chat with staff  
+- Book test drives with live slot availability  
+- View purchase history  
+- Update profile and change password  
 
-Users → Customer and Sales_Staff (one-to-one via user_id FK)
-Manufacturer → Vehicle (one-to-many)
-Vehicle → Sales, Inquiry, Wishlist, TestDrive (one-to-many)
-Inquiry → InquiryMessage (one-to-many, powers the chat)
-branch stored as TEXT in Inquiry and TestDrive — used to filter staff access at query level
+---
+
+### System-wide Features
+- Role-based authentication using decorators  
+- Live notification badges with periodic polling  
+- Branch-based data isolation enforced at SQL level  
+- Password hashing using Werkzeug  
+- Session management with Flask  
+- Forgot password with two-step username verification  
+- Fully responsive layout  
+
+---
+
+## Database Schema
+
+The application uses 10 tables with relational mappings:
+
+- Users — login credentials and roles  
+- Manufacturer — car brands  
+- Vehicle — inventory linked to manufacturer  
+- Customer — customer profiles  
+- Sales_Staff — staff profiles  
+- Sales — completed transactions  
+- Inquiry — chat threads  
+- InquiryMessage — messages within inquiries  
+- Wishlist — saved vehicles  
+- TestDrive — booking slots  
+
+---
+
+### Key Relationships
+- Users to Customer and Sales_Staff (one-to-one via user_id)  
+- Manufacturer to Vehicle (one-to-many)  
+- Vehicle to Sales, Inquiry, Wishlist, and TestDrive (one-to-many)  
+- Inquiry to InquiryMessage (one-to-many, supports chat system)  
+- Branch stored as TEXT in Inquiry and TestDrive for access control  
+
+---
