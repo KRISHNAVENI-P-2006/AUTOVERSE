@@ -20,6 +20,7 @@ def fmt_inr(amount):
 
 app.jinja_env.globals['fmt_inr'] = fmt_inr
 app.jinja_env.globals['BRANCHES'] = BRANCHES
+init_db()
 
 def login_required(f):
     @wraps(f)
@@ -1234,3 +1235,4 @@ def test_drive_slots_api():
 if __name__ == '__main__':
     init_db()
     app.run(debug=True, port=5000)
+    
