@@ -1,3 +1,6 @@
+# Initialize DB on startup
+with app.app_context():
+    init_db()
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 from database import get_db, init_db, BRANCHES
@@ -20,6 +23,8 @@ def fmt_inr(amount):
 
 app.jinja_env.globals['fmt_inr'] = fmt_inr
 app.jinja_env.globals['BRANCHES'] = BRANCHES
+
+init_db()
 
 def login_required(f):
     @wraps(f)
@@ -1234,3 +1239,4 @@ def test_drive_slots_api():
 if __name__ == '__main__':
     init_db()
     app.run(debug=True, port=5000)
+    
