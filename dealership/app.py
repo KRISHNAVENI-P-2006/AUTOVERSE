@@ -1,6 +1,3 @@
-# Initialize DB on startup
-with app.app_context():
-    init_db()
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 from database import get_db, init_db, BRANCHES
@@ -23,7 +20,6 @@ def fmt_inr(amount):
 
 app.jinja_env.globals['fmt_inr'] = fmt_inr
 app.jinja_env.globals['BRANCHES'] = BRANCHES
-
 init_db()
 
 def login_required(f):
